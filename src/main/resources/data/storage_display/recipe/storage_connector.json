@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["RPR", "PCP", "RPR"],
+  "key": {
+    "R": "minecraft:redstone_block",
+    "P": "minecraft:repeater",
+    "C": "minecraft:comparator"
+  },
+  "result": {"id": "storage_display:storage_connector", "count": 1}
+}

@@ -1,0 +1,14 @@
+{
+  "block.storage_display.storage_connector": "Conector de almacenamiento",
+  "block.storage_display.storage_display": "Pantalla de almacenamiento",
+  "container.storage_display.storage_display": "Pantalla de almacenamiento",
+  "gui.storage_display.search": "Buscar (solo extrae)...",
+  "gui.storage_display.connections": "Cofres: %s",
+  "gui.storage_display.extract_only": "Solo extrae - guarda en cofre",
+  "gui.storage_display.empty.no_connections": "Sin cofres conectados",
+  "gui.storage_display.empty.no_results": "Sin resultados",
+  "gui.storage_display.empty.no_items": "Los cofres están vacíos",
+  "gui.storage_display.depth_limited": "Contenido anidado oculto",
+  "gui.storage_display.inventory_full": "Inventario lleno",
+  "gui.storage_display.extraction_failed": "Ese objeto ya no está disponible"
+}
