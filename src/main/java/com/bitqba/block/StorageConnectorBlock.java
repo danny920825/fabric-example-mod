@@ -1,5 +1,6 @@
 package com.bitqba.block;
 
+import com.bitqba.storage.StorageNetwork;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.StateManager;
@@ -7,6 +8,7 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldView;
 
 public class StorageConnectorBlock extends Block {
@@ -38,4 +40,22 @@ public class StorageConnectorBlock extends Block {
         return state;
     }
 
+    /**
+     * The connector is the power source of the link, not the chest. Each wired side
+     * gets a level 15 signal so the repeater lights up; the repeater's arrow points
+     * at the chest, which does not respond to redstone. Sides without a wired
+     * repeater stay silent, so the connector does not feed unrelated circuits.
+     */
+    @Override
+    protected boolean emitsRedstonePower(BlockState state) {
+        return state.get(SCREEN_ATTACHED);
+    }
+
+    @Override
+    protected int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+        if (!state.get(SCREEN_ATTACHED) || direction.getAxis().isVertical()) return 0;
+        // Repeaters query their source with the direction pointing from the receiver
+        // to the connector, so the linked side is the opposite one.
+        return StorageNetwork.isWiredSide(world, pos, direction.getOpposite()) ? 15 : 0;
+    }
 }

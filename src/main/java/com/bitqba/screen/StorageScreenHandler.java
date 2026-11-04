@@ -12,47 +12,70 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class StorageScreenHandler extends ScreenHandler {
-    public static final int STORAGE_SLOTS = 54;
+    public static final int STORAGE_SLOTS = 45;
     public static final int PAGE_SIZE = STORAGE_SLOTS;
+
+    public static final int BUTTON_PREVIOUS_PAGE = 0;
+    public static final int BUTTON_NEXT_PAGE = 1;
+    public static final int BUTTON_SORT = 2;
 
     private static final int PROPERTY_PAGE = 0;
     private static final int PROPERTY_PAGE_COUNT = 1;
     private static final int PROPERTY_CONNECTIONS = 2;
     private static final int PROPERTY_ENTRIES = 3;
     private static final int PROPERTY_DEPTH_LIMITED = 4;
+    private static final int PROPERTY_TRUNCATED = 5;
+    private static final int PROPERTY_SORT = 6;
+
+    /** Origin codes pack the linked side (1-4) plus a flag (4) for stacks nested inside a shulker. */
+    private static final int ORIGIN_NESTED = 4;
+
+    public enum SortMode {
+        NONE, NAME, COUNT;
+
+        public SortMode next() {
+            return values()[(ordinal() + 1) % values().length];
+        }
+    }
 
     private final SimpleInventory view = new SimpleInventory(STORAGE_SLOTS);
     private final PlayerInventory playerInventory;
-    private final ArrayPropertyDelegate pageData = new ArrayPropertyDelegate(5);
+    private final ArrayPropertyDelegate pageData = new ArrayPropertyDelegate(7);
+    private final ArrayPropertyDelegate originData = new ArrayPropertyDelegate(STORAGE_SLOTS);
     private final BlockPos connectorPos;
     private List<StorageNetwork.StoredStack> entries = List.of();
     private String query = "";
     private int page;
+    private SortMode sortMode = SortMode.NONE;
 
     public StorageScreenHandler(int syncId, PlayerInventory playerInventory, BlockPos connectorPos) {
         super(ModScreenHandlers.STORAGE_DISPLAY, syncId);
         this.playerInventory = playerInventory;
         addProperties(pageData);
+        addProperties(originData);
         this.connectorPos = connectorPos.toImmutable();
 
         for (int i = 0; i < STORAGE_SLOTS; i++) {
             int x = 8 + (i % 9) * 18;
-            int y = 36 + (i / 9) * 18;
+            int y = 33 + (i / 9) * 18;
             addSlot(new Slot(view, i, x, y) {
                 @Override public boolean canInsert(ItemStack stack) { return false; }
             });
         }
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 190 + row * 18));
+                addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 159 + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(playerInventory, col, 8 + col * 18, 244));
+            addSlot(new Slot(playerInventory, col, 8 + col * 18, 217));
         }
 
         if (!playerInventory.player.getEntityWorld().isClient()) refresh();
@@ -83,17 +106,20 @@ public class StorageScreenHandler extends ScreenHandler {
             if (actionType != SlotActionType.PICKUP || (button != 0 && button != 1)) return;
 
             // A non-empty cursor means the player is trying to deposit. The catalog is read-only.
-            if (getCursorStack().isEmpty()) {
-                int index = page * PAGE_SIZE + slotIndex;
-                if (index >= 0 && index < entries.size()) {
-                    StorageNetwork.StoredStack entry = entries.get(index);
-                    int amount = button == 1 ? 1 : entry.stack().getCount();
-                    ItemStack taken = StorageNetwork.extract(player.getEntityWorld(), connectorPos, entry, amount);
-                    if (!taken.isEmpty()) {
-                        setCursorStack(taken);
-                    } else {
-                        player.sendMessage(Text.translatable("gui.storage_display.extraction_failed"), true);
-                    }
+            if (!getCursorStack().isEmpty()) {
+                player.sendMessage(Text.translatable("gui.storage_display.cursor_busy"), true);
+                return;
+            }
+
+            int index = page * PAGE_SIZE + slotIndex;
+            if (index >= 0 && index < entries.size()) {
+                StorageNetwork.StoredStack entry = entries.get(index);
+                int amount = button == 1 ? 1 : entry.stack().getCount();
+                ItemStack taken = StorageNetwork.extract(player.getEntityWorld(), connectorPos, entry, amount);
+                if (!taken.isEmpty()) {
+                    setCursorStack(taken);
+                } else {
+                    player.sendMessage(Text.translatable("gui.storage_display.extraction_failed"), true);
                 }
             }
             refresh();
@@ -144,6 +170,9 @@ public class StorageScreenHandler extends ScreenHandler {
             // Should not happen because the space was computed first, but never delete items.
             player.dropItem(moved, false);
         }
+        if (amount < entry.stack().getCount()) {
+            player.sendMessage(Text.translatable("gui.storage_display.partial_move", amount), true);
+        }
         refresh();
     }
 
@@ -155,9 +184,15 @@ public class StorageScreenHandler extends ScreenHandler {
             return false;
         }
 
+        if (id == BUTTON_SORT) {
+            sortMode = sortMode.next();
+            refresh();
+            return true;
+        }
+
         int pageCount = Math.max(1, (entries.size() + PAGE_SIZE - 1) / PAGE_SIZE);
-        if (id == 0) page = Math.max(0, page - 1);
-        else if (id == 1) page = Math.min(pageCount - 1, page + 1);
+        if (id == BUTTON_PREVIOUS_PAGE) page = Math.max(0, page - 1);
+        else if (id == BUTTON_NEXT_PAGE) page = Math.min(pageCount - 1, page + 1);
         else return false;
         refresh();
         return true;
@@ -175,6 +210,22 @@ public class StorageScreenHandler extends ScreenHandler {
     public int getConnectionCount() { return pageData.get(PROPERTY_CONNECTIONS); }
     public int getEntryCount() { return pageData.get(PROPERTY_ENTRIES); }
     public boolean isDepthLimited() { return pageData.get(PROPERTY_DEPTH_LIMITED) != 0; }
+    public boolean isTruncated() { return pageData.get(PROPERTY_TRUNCATED) != 0; }
+    public SortMode getSortMode() {
+        int index = Math.max(0, Math.min(PROPERTY_SORT_MAX, pageData.get(PROPERTY_SORT)));
+        return SortMode.values()[index];
+    }
+
+    private static final int PROPERTY_SORT_MAX = SortMode.values().length - 1;
+
+    /**
+     * Encoded origin of a visible catalog slot: 0 when empty, otherwise the linked
+     * side index plus one, with {@link #ORIGIN_NESTED} added for shulker contents.
+     */
+    public int getOriginCode(int slotIndex) {
+        if (slotIndex < 0 || slotIndex >= STORAGE_SLOTS) return 0;
+        return originData.get(slotIndex);
+    }
 
     private static void closeFor(PlayerEntity player) {
         if (player instanceof ServerPlayerEntity serverPlayer) serverPlayer.closeHandledScreen();
@@ -184,7 +235,8 @@ public class StorageScreenHandler extends ScreenHandler {
         if (playerInventory.player.getEntityWorld().isClient()) return;
 
         StorageNetwork.Listing listing = StorageNetwork.list(playerInventory.player.getEntityWorld(), connectorPos, query);
-        entries = listing.entries();
+        entries = new ArrayList<>(listing.entries());
+        sortEntries();
 
         int pageCount = Math.max(1, (entries.size() + PAGE_SIZE - 1) / PAGE_SIZE);
         page = Math.min(page, pageCount - 1);
@@ -194,12 +246,46 @@ public class StorageScreenHandler extends ScreenHandler {
         pageData.set(PROPERTY_CONNECTIONS, listing.connectionCount());
         pageData.set(PROPERTY_ENTRIES, entries.size());
         pageData.set(PROPERTY_DEPTH_LIMITED, listing.depthLimited() ? 1 : 0);
+        pageData.set(PROPERTY_TRUNCATED, listing.truncated() ? 1 : 0);
+        pageData.set(PROPERTY_SORT, sortMode.ordinal());
 
         view.clear();
+        for (int slot = 0; slot < STORAGE_SLOTS; slot++) {
+            originData.set(slot, 0);
+        }
         int start = page * PAGE_SIZE;
         for (int slot = 0; slot < PAGE_SIZE && start + slot < entries.size(); slot++) {
-            view.setStack(slot, entries.get(start + slot).stack().copy());
+            StorageNetwork.StoredStack entry = entries.get(start + slot);
+            view.setStack(slot, entry.stack().copy());
+            originData.set(slot, originCode(entry));
         }
         sendContentUpdates();
+    }
+
+    private void sortEntries() {
+        switch (sortMode) {
+            case NAME -> entries.sort(Comparator
+                    .comparing((StorageNetwork.StoredStack entry) -> entry.stack().getName().getString(),
+                            String.CASE_INSENSITIVE_ORDER)
+                    .thenComparing(Comparator.comparingInt(
+                            (StorageNetwork.StoredStack entry) -> entry.stack().getCount()).reversed())
+                    .thenComparingInt(entry -> sideIndex(entry.chest().side())));
+            case COUNT -> entries.sort(Comparator
+                    .comparingInt((StorageNetwork.StoredStack entry) -> entry.stack().getCount()).reversed()
+                    .thenComparing(entry -> entry.stack().getName().getString(), String.CASE_INSENSITIVE_ORDER));
+            case NONE -> { }
+        }
+    }
+
+    private static int sideIndex(Direction side) {
+        for (int i = 0; i < StorageNetwork.SIDES.length; i++) {
+            if (StorageNetwork.SIDES[i] == side) return i;
+        }
+        return 0;
+    }
+
+    private static int originCode(StorageNetwork.StoredStack entry) {
+        int code = 1 + sideIndex(entry.chest().side());
+        return entry.path().isEmpty() ? code : code + ORIGIN_NESTED;
     }
 }

@@ -2,7 +2,7 @@
 
 La prioridad es publicar una primera versión pequeña que extraiga objetos con seguridad. Las fases posteriores no deben retrasar ese primer release.
 
-> Estado de la revisión (3 de noviembre de 2026): el código ya está alineado con el alcance extractor de 0.1. Están implementados la ausencia total de depósitos, la revalidación en servidor, el límite de profundidad y la eliminación del forzado de repeaters. Quedan las pruebas manuales en mundo y la validación del JAR en una instancia limpia.
+> Estado de la revisión (4 de noviembre de 2026): el código está alineado con el alcance extractor de 0.1.1. Están implementados la ausencia total de depósitos, la revalidación en servidor, el límite de profundidad, la interfaz compacta de 45 resultados por página, los tooltips de objetos, la ordenación, el origen por lado y las letras de orientación del conector. Quedan las pruebas manuales en mundo y la validación del JAR en una instancia limpia.
 
 ## Fase 0 — Preparar el release inicial
 
@@ -17,7 +17,7 @@ La prioridad es publicar una primera versión pequeña que extraiga objetos con 
 
 ## Fase 1 — Publicar 0.1
 
-- [x] Elegir versión y nombre visibles del primer release: **Storage Display 0.1.0-beta**.
+- [x] Elegir versión y nombre visibles del primer release: **Storage Display 0.1.1**.
 - [x] Escribir instrucciones de instalación y uso, limitaciones conocidas y versión exacta de Minecraft/Fabric.
 - [x] Preparar changelog breve.
 - [ ] Probar el JAR exportado en una instancia limpia compatible, no solo en el entorno de desarrollo.
@@ -26,8 +26,8 @@ La prioridad es publicar una primera versión pequeña que extraiga objetos con 
 ## Fase 2 — Mejoras posteriores de consulta
 
 - [x] Mostrar estados vacíos claros: sin conexiones, búsqueda sin resultados y aviso de contenido anidado oculto por profundidad.
-- [ ] Añadir ubicación del resultado (cofre/lado y ruta dentro de shulker) si resulta útil.
-- [ ] Añadir ordenación al catálogo por nombre/cantidad sin mover objetos.
+- [x] Añadir ubicación del resultado (cofre/lado y ruta dentro de shulker) si resulta útil. Se muestra al pasar el ratón y las caras del conector llevan las letras N/S/E/W.
+- [x] Añadir ordenación al catálogo por nombre/cantidad sin mover objetos.
 - [ ] Medir el rendimiento de búsqueda con cofres llenos y contenedores anidados; optimizar solo si hace falta.
 - [ ] Añadir más contenedores vanilla de forma deliberada y probar sus reglas de anidamiento.
 

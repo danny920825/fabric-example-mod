@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -31,13 +32,19 @@ public final class StorageNetwork {
      * Stacks at the limit are listed, but their own contents are not explored.
      */
     private static final int MAX_CONTAINER_DEPTH = 2;
-    private static final Direction[] SIDES = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+    /**
+     * Hard ceiling on collected entries. Without it a network full of nested shulkers
+     * can produce hundreds of thousands of stack copies on every keystroke, on the
+     * server thread. The catalog informs the player when the list was cut short.
+     */
+    public static final int MAX_ENTRIES = 3000;
+    public static final Direction[] SIDES = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
 
     private StorageNetwork() {}
 
-    public record ChestStorage(BlockPos position, Inventory inventory) {}
+    public record ChestStorage(BlockPos position, Inventory inventory, Direction side) {}
     public record StoredStack(ChestStorage chest, int slot, List<Integer> path, ItemStack stack) {}
-    public record Listing(List<StoredStack> entries, int connectionCount, boolean depthLimited) {}
+    public record Listing(List<StoredStack> entries, int connectionCount, boolean depthLimited, boolean truncated) {}
 
     /**
      * The screen is only authoritative while both blocks are still present and connected.
@@ -49,16 +56,30 @@ public final class StorageNetwork {
     }
 
     public static boolean isConnectedRepeater(World world, BlockPos connector, Direction side) {
-        if (!isOperational(world, connector)) return false;
+        return isOperational(world, connector) && isWiredSide(world, connector, side);
+    }
+
+    /**
+     * A side is wired when the repeater between the connector and the chest reads
+     * from the connector. Repeaters only accept power on the side opposite their
+     * arrow, so the arrow points at the chest and the connector feeds the gate.
+     *
+     * <p>This is also the rule used by the connector block to power its repeaters,
+     * so both sides of the link stay in sync.</p>
+     */
+    public static boolean isWiredSide(BlockView world, BlockPos connector, Direction side) {
+        if (side.getAxis().isVertical()) return false;
 
         BlockPos repeaterPos = connector.offset(side);
         BlockState repeater = world.getBlockState(repeaterPos);
-        if (!repeater.isOf(Blocks.REPEATER) || repeater.get(RepeaterBlock.FACING) != side) return false;
+        if (!repeater.isOf(Blocks.REPEATER) || repeater.get(RepeaterBlock.FACING) != side.getOpposite()) {
+            return false;
+        }
 
         BlockPos chestPos = repeaterPos.offset(side);
-        BlockState chestState = world.getBlockState(chestPos);
-        if (!chestState.isOf(Blocks.CHEST)) return false;
-        return ChestBlock.getInventory((ChestBlock) chestState.getBlock(), chestState, world, chestPos, true) != null;
+        if (!world.getBlockState(chestPos).isOf(Blocks.CHEST)) return false;
+
+        return true;
     }
 
     public static List<ChestStorage> findChests(World world, BlockPos connector) {
@@ -83,7 +104,9 @@ public final class StorageNetwork {
                 canonical = chestPos.offset(ChestBlock.getFacing(state));
                 if (canonical.asLong() > chestPos.asLong()) canonical = chestPos;
             }
-            if (seen.add(canonical.asLong())) result.add(new ChestStorage(canonical.toImmutable(), inventory));
+            if (seen.add(canonical.asLong())) {
+                result.add(new ChestStorage(canonical.toImmutable(), inventory, side));
+            }
         }
         return result;
     }
@@ -96,17 +119,21 @@ public final class StorageNetwork {
 
         for (ChestStorage chest : chests) {
             for (int slot = 0; slot < chest.inventory().size(); slot++) {
+                if (result.size() >= MAX_ENTRIES) break;
                 ItemStack root = chest.inventory().getStack(slot);
                 if (root.isEmpty()) continue;
                 collect(chest, slot, root, new ArrayList<>(), needle, result, depthLimited, 0);
             }
+            if (result.size() >= MAX_ENTRIES) break;
         }
-        return new Listing(List.copyOf(result), chests.size(), depthLimited[0]);
+
+        boolean truncated = result.size() >= MAX_ENTRIES;
+        return new Listing(List.copyOf(result), chests.size(), depthLimited[0], truncated);
     }
 
     private static void collect(ChestStorage chest, int rootSlot, ItemStack stack, List<Integer> path,
             String query, List<StoredStack> result, boolean[] depthLimited, int depth) {
-        if (stack.isEmpty()) return;
+        if (stack.isEmpty() || result.size() >= MAX_ENTRIES) return;
         if (query.isEmpty() || matches(stack, query)) {
             result.add(new StoredStack(chest, rootSlot, List.copyOf(path), stack.copy()));
         }

@@ -8,13 +8,14 @@ El concepto funciona y tiene identidad: una terminal física conecta cofres vani
 
 El primer JAR puede ser sencillo visualmente; lo que no debe hacer es borrar, duplicar o consumir objetos de forma inesperada. Conviene reducir el alcance inicial a una red local pequeña y documentar claramente qué almacenamiento admite.
 
-## Estado de la implementación (3 de noviembre de 2026)
+## Estado de la implementación (4 de noviembre de 2026)
 
 - **Integridad de shulkers:** revisada en código. La extracción de la shulker completa conserva su contenido, extraer el último objeto deja la caja vacía en su sitio y el componente de contenedor se normaliza al quedar vacío. Falta la prueba manual.
 - **Sin inserción:** eliminadas las rutas de depósito con cursor y shift-clic. El shift-clic desde el catálogo solo mueve objetos al inventario del jugador. Las ranuras del catálogo no aceptan inserciones en ninguna página.
 - **Cambios externos:** cada búsqueda, cambio de página y extracción vuelve a validar conector, pantalla, cofre, slot y ruta de shulker en el servidor. Si la referencia ya no es válida, no se mueve nada y la lista se actualiza.
-- **Redstone:** se eliminó el mixin que forzaba encendido y delay 1. Los repeaters conservan su comportamiento vanilla y solo se usan como marcadores de dirección; el conector y la interfaz indican el estado de la red.
+- **Redstone:** se eliminó el mixin que forzaba encendido y delay 1. El conector emite una señal de nivel 15 solo hacia los lados con repetidor correctamente orientado y solo mientras tiene pantalla; el repetidor se enciende para confirmar el enlace sin cambiar su delay ni su comportamiento vanilla. La interfaz muestra el contador de conexiones.
 - **Profundidad:** el catálogo limita los contenedores anidados a dos niveles y muestra un aviso cuando oculta contenido más profundo.
+- **Interfaz 0.1.1:** panel compacto de 176×238 con 45 resultados por página, tooltips de objetos, ordenación por orden/nombre/cantidad, navegación con botones, rueda y teclado, origen por lado al pasar el ratón y letras N/S/E/W en las caras del conector.
 - **Pruebas pendientes:** recorrido completo en mundo nuevo, cofres simples/dobles en varias orientaciones, shulkers llenas/parciales/vacías, desconexión, rotura/recuperación, persistencia al reabrir y JAR en instancia limpia.
 
 ## Bloqueadores antes de publicar el primer JAR
@@ -23,17 +24,17 @@ El primer JAR puede ser sencillo visualmente; lo que no debe hacer es borrar, du
 2. **Eliminar toda inserción desde el catálogo.** La GUI no acepta depósitos con cursor ni shift-clic desde el inventario del jugador. Para guardar, se usa el cofre vanilla concreto. Esto debe ser consistente en todas las ranuras y páginas.
 3. **Definir comportamiento ante cambios externos.** Antes de cada extracción, volver a localizar la conexión y validar el objetivo real; mostrar el resultado actualizado. Si se desconecta un cofre o se retira la pantalla, la interfaz no debe operar sobre una referencia vieja.
 4. **Probar el recorrido básico en un mundo nuevo.** Fabricación, colocación, conexión, apertura, búsqueda, paginación, retiro, ausencia de inserción, rotura y recuperación de ambos bloques. Usar cofres simples y dobles en varias orientaciones. Probar también guardar, salir y volver.
-5. **Eliminar sorpresas con redstone.** El repetidor se fuerza a encendido y delay 1. Eso cambia su función vanilla y puede energizar circuitos vecinos. Para el primer JAR, preferir una señal visual propia del conector. Si se mantiene el comportamiento, describirlo en la receta/README y probar circuitos contiguos.
+5. **Confirmar el comportamiento de redstone en circuitos contiguos.** El conector solo alimenta el repetidor enlazado y solo con pantalla montada. El repetidor conserva su delay, pero al encenderse emite poder fuerte hacia el cofre, que no conduce; conviene probar que no altera circuitos vecinos y documentarlo en el README.
 
-## Alcance recomendado para 0.1
+## Alcance recomendado para 0.1.1
 
 - Solo cofres vanilla normales y sus shulkers anidadas; sin ender chests ni inventarios de otros mods.
 - Conector físico de cuatro lados, con cada cofre justo detrás del repetidor correspondiente.
-- Búsqueda por nombre visible y por identificador, paginación y extracción de objetos (clic izquierdo para stack, derecho para una unidad, shift-clic desde el catálogo al inventario del jugador).
+- Búsqueda por nombre visible y por identificador, paginación de 45 resultados y extracción de objetos (clic izquierdo para stack, derecho para una unidad, shift-clic desde el catálogo al inventario del jugador).
 - Solo extracción: ninguna acción de la pantalla introduce objetos en cofres o shulkers. Los depósitos se hacen directamente en el contenedor elegido por el jugador.
 - Capar la profundidad de shulkers y mostrar un aviso comprensible cuando un elemento no se puede operar.
 - Mantener la consulta cerca del bloque y autoritativa en servidor.
-- Interfaz simple pero legible: título, búsqueda, contador de página/conexiones, estados vacíos y error de conexión. El arte puede pulirse después.
+- Interfaz compacta y legible: título, búsqueda, ordenación, contador de página/conexiones, tooltips, origen por lado y estados vacíos. Las caras del conector muestran N/S/E/W.
 - Recetas y descripción que expliquen el coste y el alcance. No añadir todavía alcance remoto, canales, filtros avanzados o compatibilidad de terceros.
 
 ## Prioridad después del primer JAR
