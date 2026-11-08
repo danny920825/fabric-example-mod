@@ -2,9 +2,8 @@ package com.bitqba.storage;
 
 import com.bitqba.block.ModBlocks;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.RepeaterBlock;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.ChestBlock;
 import net.minecraft.block.enums.ChestType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
@@ -14,16 +13,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-/** Resolves the connector's four repeater outputs and performs safe, extraction-only item mutations. */
+/** Resolves the connector's cable network and performs safe, extraction-only item mutations. */
 public final class StorageNetwork {
     /**
      * Maximum depth that is explored below a chest slot.
@@ -38,7 +37,19 @@ public final class StorageNetwork {
      * server thread. The catalog informs the player when the list was cut short.
      */
     public static final int MAX_ENTRIES = 3000;
-    public static final Direction[] SIDES = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+    /** Hard capacity of a network: four chests per lateral branch plus four below. */
+    public static final int MAX_CHESTS = 20;
+    public static final int MAX_CHESTS_PER_BRANCH = 4;
+    /** Safety ceiling for the cable flood-fill, not a gameplay limit. */
+    private static final int MAX_CABLES = 4096;
+
+    /**
+     * Root faces that can carry a cable branch, in priority order. The top face is
+     * excluded because the Storage Display always sits there.
+     */
+    public static final Direction[] SIDES = {
+            Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.DOWN
+    };
 
     private StorageNetwork() {}
 
@@ -55,60 +66,135 @@ public final class StorageNetwork {
                 && world.getBlockState(connector.up()).isOf(ModBlocks.STORAGE_DISPLAY);
     }
 
-    public static boolean isConnectedRepeater(World world, BlockPos connector, Direction side) {
-        return isOperational(world, connector) && isWiredSide(world, connector, side);
+    public static int sideIndex(Direction side) {
+        for (int i = 0; i < SIDES.length; i++) {
+            if (SIDES[i] == side) return i;
+        }
+        return 0;
     }
 
     /**
-     * A side is wired when the repeater between the connector and the chest reads
-     * from the connector. Repeaters only accept power on the side opposite their
-     * arrow, so the arrow points at the chest and the connector feeds the gate.
-     *
-     * <p>This is also the rule used by the connector block to power its repeaters,
-     * so both sides of the link stay in sync.</p>
+     * Finds the operational Storage Connector that owns the cable network touching
+     * {@code pos}. Returns {@code null} when the block does not touch a cable or when
+     * no connector with a display is reachable from it.
      */
-    public static boolean isWiredSide(BlockView world, BlockPos connector, Direction side) {
-        if (side.getAxis().isVertical()) return false;
-
-        BlockPos repeaterPos = connector.offset(side);
-        BlockState repeater = world.getBlockState(repeaterPos);
-        if (!repeater.isOf(Blocks.REPEATER) || repeater.get(RepeaterBlock.FACING) != side.getOpposite()) {
-            return false;
+    public static BlockPos findRoot(World world, BlockPos pos) {
+        Set<Long> visited = new HashSet<>();
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        for (Direction direction : Direction.values()) {
+            BlockPos neighbor = pos.offset(direction).toImmutable();
+            if (world.getBlockState(neighbor).isOf(ModBlocks.ARCHIVE_CABLE)
+                    && visited.add(neighbor.asLong())) {
+                queue.addLast(neighbor);
+            }
         }
 
-        BlockPos chestPos = repeaterPos.offset(side);
-        if (!world.getBlockState(chestPos).isOf(Blocks.CHEST)) return false;
+        while (!queue.isEmpty() && visited.size() <= MAX_CABLES) {
+            BlockPos cable = queue.removeFirst();
 
-        return true;
+            for (Direction direction : Direction.values()) {
+                BlockPos candidate = cable.offset(direction);
+                if (world.getBlockState(candidate).isOf(ModBlocks.STORAGE_CONNECTOR)
+                        && isOperational(world, candidate)) {
+                    return candidate.toImmutable();
+                }
+            }
+
+            for (Direction direction : Direction.values()) {
+                BlockPos next = cable.offset(direction).toImmutable();
+                if (world.getBlockState(next).isOf(ModBlocks.ARCHIVE_CABLE)
+                        && visited.add(next.asLong())) {
+                    queue.addLast(next);
+                }
+            }
+        }
+        return null;
     }
 
+    /**
+     * Walks the cable network once per usable connector face and collects the chests
+     * that touch a cable. Each branch is capped at four chests and a chest reachable
+     * from several faces is claimed by the first one, so a ring around the connector
+     * can still use the capacity of every face.
+     */
     public static List<ChestStorage> findChests(World world, BlockPos connector) {
         if (!isOperational(world, connector)) return List.of();
 
-        List<ChestStorage> result = new ArrayList<>(4);
-        Set<Long> seen = new HashSet<>();
-        for (Direction side : SIDES) {
-            if (!isConnectedRepeater(world, connector, side)) continue;
-
-            BlockPos repeaterPos = connector.offset(side);
-            BlockPos chestPos = repeaterPos.offset(side);
-            BlockState state = world.getBlockState(chestPos);
-            if (!state.isOf(Blocks.CHEST)) continue;
-
-            ChestBlock chestBlock = (ChestBlock) state.getBlock();
-            Inventory inventory = ChestBlock.getInventory(chestBlock, state, world, chestPos, true);
-            if (inventory == null) continue;
-
-            BlockPos canonical = chestPos;
-            if (state.get(ChestBlock.CHEST_TYPE) != ChestType.SINGLE) {
-                canonical = chestPos.offset(ChestBlock.getFacing(state));
-                if (canonical.asLong() > chestPos.asLong()) canonical = chestPos;
-            }
-            if (seen.add(canonical.asLong())) {
-                result.add(new ChestStorage(canonical.toImmutable(), inventory, side));
-            }
+        List<ChestStorage> result = new ArrayList<>(MAX_CHESTS);
+        Set<Long> seenChests = new HashSet<>();
+        for (Direction branch : SIDES) {
+            if (result.size() >= MAX_CHESTS) break;
+            collectBranch(world, connector, branch, seenChests, result);
         }
         return result;
+    }
+
+    private static void collectBranch(World world, BlockPos connector, Direction branch,
+            Set<Long> seenChests, List<ChestStorage> result) {
+        BlockPos start = connector.offset(branch).toImmutable();
+        if (!world.getBlockState(start).isOf(ModBlocks.ARCHIVE_CABLE)) return;
+
+        Set<Long> visitedCables = new HashSet<>();
+        Set<Long> visitedJunctions = new HashSet<>();
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        queue.addLast(start);
+        visitedCables.add(start.asLong());
+
+        int chests = 0;
+        int visited = 0;
+        while (!queue.isEmpty() && chests < MAX_CHESTS_PER_BRANCH
+                && result.size() < MAX_CHESTS && visited < MAX_CABLES) {
+            BlockPos cablePos = queue.removeFirst();
+            visited++;
+
+            for (Direction direction : Direction.values()) {
+                if (chests >= MAX_CHESTS_PER_BRANCH || result.size() >= MAX_CHESTS) break;
+
+                BlockPos neighborPos = cablePos.offset(direction);
+                BlockState neighbor = world.getBlockState(neighborPos);
+
+                if (neighbor.isOf(ModBlocks.ARCHIVE_CABLE)) {
+                    if (visitedCables.add(neighborPos.asLong())) {
+                        queue.addLast(neighborPos.toImmutable());
+                    }
+                    continue;
+                }
+
+                if (neighbor.isOf(ModBlocks.ARCHIVE_CONNECTOR)) {
+                    // The Archive Connector is a cable junction: keep walking through it.
+                    if (visitedJunctions.add(neighborPos.asLong())) {
+                        for (Direction outgoing : Direction.values()) {
+                            BlockPos next = neighborPos.offset(outgoing).toImmutable();
+                            if (world.getBlockState(next).isOf(ModBlocks.ARCHIVE_CABLE)
+                                    && visitedCables.add(next.asLong())) {
+                                queue.addLast(next);
+                            }
+                        }
+                    }
+                    continue;
+                }
+
+                if (!neighbor.isOf(Blocks.CHEST)) continue;
+
+                BlockPos canonical = canonicalChestPos(neighbor, neighborPos);
+                if (seenChests.contains(canonical.asLong())) continue;
+
+                Inventory inventory = ChestBlock.getInventory(
+                        (ChestBlock) neighbor.getBlock(), neighbor, world, neighborPos, true);
+                if (inventory == null) continue;
+
+                seenChests.add(canonical.asLong());
+                chests++;
+                result.add(new ChestStorage(canonical, inventory, branch));
+            }
+        }
+    }
+
+    /** Both halves of a double chest resolve to the same position, so it counts once. */
+    private static BlockPos canonicalChestPos(BlockState state, BlockPos chestPos) {
+        if (state.get(ChestBlock.CHEST_TYPE) == ChestType.SINGLE) return chestPos.toImmutable();
+        BlockPos other = chestPos.offset(ChestBlock.getFacing(state));
+        return other.asLong() < chestPos.asLong() ? other.toImmutable() : chestPos.toImmutable();
     }
 
     public static Listing list(World world, BlockPos connector, String query) {

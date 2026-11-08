@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "storage_display",
+	"id": "arcanum_storage",
 	"version": "${version}",
-	"name": "Storage Display",
-	"description": "Search and extract items from connected vanilla chests and shulker boxes. Extraction only: store items by opening the chest.",
+	"name": "Arcanum Storage",
+	"description": "Arcanum Storage links up to 20 vanilla chests with Archive Cables so you can search and extract their contents, including the shulker boxes stored inside them. Organize unlabeled shulkers with the Archive Connector's Shulker Press and carry a portable door to your ender chest with the End Pouch. Extraction only: store items by opening the chest.",
 	"authors": [
 		"Danny"
 	],
@@ -13,12 +13,15 @@
 	},
 	"license": "MIT",
 	"environment": "*",
+	"mixins": [
+		"arcanum_storage.mixins.json"
+	],
 	"entrypoints": {
 		"main": [
-			"com.bitqba.StorageDisplayMod"
+			"com.bitqba.ArcanumStorageMod"
 		],
 		"client": [
-			"com.bitqba.client.StorageDisplayClient"
+			"com.bitqba.client.ArcanumStorageClient"
 		]
 	},
 	"depends": {

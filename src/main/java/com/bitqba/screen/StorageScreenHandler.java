@@ -12,7 +12,6 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,8 +33,8 @@ public class StorageScreenHandler extends ScreenHandler {
     private static final int PROPERTY_TRUNCATED = 5;
     private static final int PROPERTY_SORT = 6;
 
-    /** Origin codes pack the linked side (1-4) plus a flag (4) for stacks nested inside a shulker. */
-    private static final int ORIGIN_NESTED = 4;
+    /** Origin codes pack the linked branch index (1-5) plus the branch count for stacks nested in a shulker. */
+    private static final int ORIGIN_NESTED = StorageNetwork.SIDES.length;
 
     public enum SortMode {
         NONE, NAME, COUNT;
@@ -107,7 +106,7 @@ public class StorageScreenHandler extends ScreenHandler {
 
             // A non-empty cursor means the player is trying to deposit. The catalog is read-only.
             if (!getCursorStack().isEmpty()) {
-                player.sendMessage(Text.translatable("gui.storage_display.cursor_busy"), true);
+                player.sendMessage(Text.translatable("gui.arcanum_storage.cursor_busy"), true);
                 return;
             }
 
@@ -119,7 +118,7 @@ public class StorageScreenHandler extends ScreenHandler {
                 if (!taken.isEmpty()) {
                     setCursorStack(taken);
                 } else {
-                    player.sendMessage(Text.translatable("gui.storage_display.extraction_failed"), true);
+                    player.sendMessage(Text.translatable("gui.arcanum_storage.extraction_failed"), true);
                 }
             }
             refresh();
@@ -153,14 +152,14 @@ public class StorageScreenHandler extends ScreenHandler {
         StorageNetwork.StoredStack entry = entries.get(index);
         int space = StorageNetwork.availableSpace(player.getInventory(), entry.stack());
         if (space <= 0) {
-            player.sendMessage(Text.translatable("gui.storage_display.inventory_full"), true);
+            player.sendMessage(Text.translatable("gui.arcanum_storage.inventory_full"), true);
             return;
         }
 
         int amount = Math.min(space, entry.stack().getCount());
         ItemStack moved = StorageNetwork.extract(player.getEntityWorld(), connectorPos, entry, amount);
         if (moved.isEmpty()) {
-            player.sendMessage(Text.translatable("gui.storage_display.extraction_failed"), true);
+            player.sendMessage(Text.translatable("gui.arcanum_storage.extraction_failed"), true);
             refresh();
             return;
         }
@@ -171,7 +170,7 @@ public class StorageScreenHandler extends ScreenHandler {
             player.dropItem(moved, false);
         }
         if (amount < entry.stack().getCount()) {
-            player.sendMessage(Text.translatable("gui.storage_display.partial_move", amount), true);
+            player.sendMessage(Text.translatable("gui.arcanum_storage.partial_move", amount), true);
         }
         refresh();
     }
@@ -269,7 +268,7 @@ public class StorageScreenHandler extends ScreenHandler {
                             String.CASE_INSENSITIVE_ORDER)
                     .thenComparing(Comparator.comparingInt(
                             (StorageNetwork.StoredStack entry) -> entry.stack().getCount()).reversed())
-                    .thenComparingInt(entry -> sideIndex(entry.chest().side())));
+                    .thenComparingInt(entry -> StorageNetwork.sideIndex(entry.chest().side())));
             case COUNT -> entries.sort(Comparator
                     .comparingInt((StorageNetwork.StoredStack entry) -> entry.stack().getCount()).reversed()
                     .thenComparing(entry -> entry.stack().getName().getString(), String.CASE_INSENSITIVE_ORDER));
@@ -277,15 +276,8 @@ public class StorageScreenHandler extends ScreenHandler {
         }
     }
 
-    private static int sideIndex(Direction side) {
-        for (int i = 0; i < StorageNetwork.SIDES.length; i++) {
-            if (StorageNetwork.SIDES[i] == side) return i;
-        }
-        return 0;
-    }
-
     private static int originCode(StorageNetwork.StoredStack entry) {
-        int code = 1 + sideIndex(entry.chest().side());
+        int code = 1 + StorageNetwork.sideIndex(entry.chest().side());
         return entry.path().isEmpty() ? code : code + ORIGIN_NESTED;
     }
 }

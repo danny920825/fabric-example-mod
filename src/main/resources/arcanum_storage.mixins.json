@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.bitqba.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PlayerEntityMixin",
+    "ShulkerBoxBlockEntityMixin",
+    "VillagerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

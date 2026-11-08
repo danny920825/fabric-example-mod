@@ -2,6 +2,13 @@
 
 Revisión centrada en el alcance del primer release: un extractor local, seguro y sin rutas de depósito.
 
+## Estado 1.0
+
+- **Conector de Archivo:** implementado con `FACING` (incluidas direcciones verticales), `LINKED`, detección de cofre adyacente y apertura de la pantalla de prensa. No emite redstone; solo indica el enlace con luz y textura.
+- **Prensa de Shulkers:** implementada en `ShulkerPress`. Analiza un cofre simple o doble, ignora shulkers con nombre o lore, agrupa por objeto + componentes, ordena por cantidad total descendente y reparte stacks.
+- **Seguridad:** la aplicación valida el snapshot completo del cofre y restaura el contenido si algo falla; aborta si el cofre cambió entre análisis y aplicación.
+- **Interfaz:** `ArchivePressScreenHandler` y `ArchivePressScreen` con resumen y confirmación en dos pasos.
+
 ## Hallazgos corregidos
 
 1. **Depósitos desde el catálogo.** `StorageScreenHandler` aceptaba clic con cursor y shift-clic desde el inventario, y `StorageNetwork.insert` escribía en la red. Se eliminaron el método de inserción y todas las ramas de depósito. Las ranuras del catálogo tienen `canInsert = false` y el shift-clic solo mueve del catálogo al inventario del jugador.

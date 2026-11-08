@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["LEL", "CHC", "SYS"],
+  "key": {
+    "L": "minecraft:leather",
+    "E": "minecraft:ender_chest",
+    "C": "minecraft:chorus_fruit",
+    "H": "minecraft:shulker_shell",
+    "S": "minecraft:string",
+    "Y": "minecraft:ender_eye"
+  },
+  "result": {"id": "arcanum_storage:end_pouch", "count": 1}
+}

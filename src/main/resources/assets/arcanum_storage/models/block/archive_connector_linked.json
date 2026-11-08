@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "arcanum_storage:block/archive_connector_side",
+    "down": "arcanum_storage:block/archive_connector_bottom",
+    "up": "arcanum_storage:block/archive_connector_top",
+    "north": "arcanum_storage:block/archive_connector_front_linked",
+    "south": "arcanum_storage:block/archive_connector_side",
+    "east": "arcanum_storage:block/archive_connector_side",
+    "west": "arcanum_storage:block/archive_connector_side"
+  }
+}

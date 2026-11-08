@@ -1,4 +1,4 @@
-# Storage Display: mejoras para el primer JAR
+# Arcanum Storage: mejoras para el primer JAR
 
 Revisión de producto y código: 2 de noviembre de 2026. Enfoque: primer lanzamiento pequeño, usable y seguro para los objetos. No hace falta que incluya todas las ideas futuras.
 
@@ -9,6 +9,8 @@ El concepto funciona y tiene identidad: una terminal física conecta cofres vani
 El primer JAR puede ser sencillo visualmente; lo que no debe hacer es borrar, duplicar o consumir objetos de forma inesperada. Conviene reducir el alcance inicial a una red local pequeña y documentar claramente qué almacenamiento admite.
 
 ## Estado de la implementación (4 de noviembre de 2026)
+
+- **Fase 2 / versión 1.0:** **Conector de Archivo y Prensa de Shulkers implementados.** El conector se enlaza directamente contra un cofre sin repetidores, tiene prensa propia y la prensa organiza un solo cofre con vista previa, resumen y confirmación en dos pasos. El JAR se compiló como `storage-display-1.0.0.jar` y se revisaron bloques, modelos, texturas, recetas, loot tables, traducciones y metadatos. Falta la prueba manual en mundo y la validación del JAR en una instancia limpia.
 
 - **Integridad de shulkers:** revisada en código. La extracción de la shulker completa conserva su contenido, extraer el último objeto deja la caja vacía en su sitio y el componente de contenedor se normaliza al quedar vacío. Falta la prueba manual.
 - **Sin inserción:** eliminadas las rutas de depósito con cursor y shift-clic. El shift-clic desde el catálogo solo mueve objetos al inventario del jugador. Las ranuras del catálogo no aceptan inserciones en ninguna página.

@@ -1,0 +1,19 @@
+{
+  "anvil_cost": 62,
+  "description": {
+    "translate": "enchantment.arcanum_storage.arcanum_binding"
+  },
+  "effects": {},
+  "max_cost": {
+    "base": 31,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 31,
+    "per_level_above_first": 0
+  },
+  "slots": [],
+  "supported_items": "#arcanum_storage:arcanum_binding_supported",
+  "weight": 1
+}

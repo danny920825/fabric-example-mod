@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["CRC", "RSR", "CPC"],
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "R": "minecraft:redstone",
+    "S": "minecraft:shulker_shell",
+    "P": "minecraft:piston"
+  },
+  "result": {"id": "arcanum_storage:archive_connector", "count": 1}
+}

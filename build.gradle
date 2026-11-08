@@ -18,7 +18,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"storage_display" {
+		"arcanum_storage" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

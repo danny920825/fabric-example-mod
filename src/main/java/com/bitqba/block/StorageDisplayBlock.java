@@ -86,7 +86,7 @@ public class StorageDisplayBlock extends Block {
                     return new StorageScreenHandler(syncId, inventory, connectorPos);
                 }
 
-                @Override public Text getDisplayName() { return Text.translatable("container.storage_display.storage_display"); }
+                @Override public Text getDisplayName() { return Text.translatable("container.arcanum_storage.storage_display"); }
                 @Override public BlockPos getScreenOpeningData(ServerPlayerEntity ignored) { return connectorPos; }
             });
         }

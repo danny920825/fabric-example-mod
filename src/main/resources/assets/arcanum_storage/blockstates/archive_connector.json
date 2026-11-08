@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=north,linked=false": { "model": "arcanum_storage:block/archive_connector" },
+    "facing=east,linked=false": { "model": "arcanum_storage:block/archive_connector", "y": 90 },
+    "facing=south,linked=false": { "model": "arcanum_storage:block/archive_connector", "y": 180 },
+    "facing=west,linked=false": { "model": "arcanum_storage:block/archive_connector", "y": 270 },
+    "facing=up,linked=false": { "model": "arcanum_storage:block/archive_connector", "x": 270 },
+    "facing=down,linked=false": { "model": "arcanum_storage:block/archive_connector", "x": 90 },
+    "facing=north,linked=true": { "model": "arcanum_storage:block/archive_connector_linked" },
+    "facing=east,linked=true": { "model": "arcanum_storage:block/archive_connector_linked", "y": 90 },
+    "facing=south,linked=true": { "model": "arcanum_storage:block/archive_connector_linked", "y": 180 },
+    "facing=west,linked=true": { "model": "arcanum_storage:block/archive_connector_linked", "y": 270 },
+    "facing=up,linked=true": { "model": "arcanum_storage:block/archive_connector_linked", "x": 270 },
+    "facing=down,linked=true": { "model": "arcanum_storage:block/archive_connector_linked", "x": 90 }
+  }
+}

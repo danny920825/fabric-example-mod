@@ -1,6 +1,0 @@
-{
-  "variants": {
-    "screen_attached=false": { "model": "storage_display:block/storage_connector" },
-    "screen_attached=true": { "model": "storage_display:block/storage_connector_active" }
-  }
-}

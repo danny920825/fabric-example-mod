@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "screen_attached=false": { "model": "arcanum_storage:block/storage_connector" },
+    "screen_attached=true": { "model": "arcanum_storage:block/storage_connector_active" }
+  }
+}

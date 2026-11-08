@@ -1,4 +1,4 @@
-# Plan del mod Storage Display
+# Plan del mod Arcanum Storage
 
 ## Objetivo
 

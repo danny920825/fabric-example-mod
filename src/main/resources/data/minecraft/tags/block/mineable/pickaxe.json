@@ -1,0 +1,7 @@
+{
+  "values": [
+    "arcanum_storage:storage_connector",
+    "arcanum_storage:storage_display",
+    "arcanum_storage:archive_connector"
+  ]
+}

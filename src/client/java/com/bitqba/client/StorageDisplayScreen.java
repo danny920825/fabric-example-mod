@@ -20,7 +20,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class StorageDisplayScreen extends HandledScreen<StorageScreenHandler> {
     private static final Identifier TEXTURE =
-            Identifier.of("storage_display", "textures/gui/storage_display.png");
+            Identifier.of("arcanum_storage", "textures/gui/storage_display.png");
 
     private static final int CATALOG_X = 8;
     private static final int CATALOG_Y = 33;
@@ -51,11 +51,11 @@ public class StorageDisplayScreen extends HandledScreen<StorageScreenHandler> {
         super.init();
 
         searchField = new TextFieldWidget(textRenderer, x + 11, y + 19, 137, 10,
-                Text.translatable("gui.storage_display.search"));
+                Text.translatable("gui.arcanum_storage.search"));
         searchField.setMaxLength(64);
         searchField.setDrawsBackground(false);
         searchField.setTextShadow(false);
-        searchField.setPlaceholder(Text.translatable("gui.storage_display.search"));
+        searchField.setPlaceholder(Text.translatable("gui.arcanum_storage.search"));
         searchField.setText(lastQuery);
         searchField.setChangedListener(query -> {
             lastQuery = query;
@@ -68,23 +68,23 @@ public class StorageDisplayScreen extends HandledScreen<StorageScreenHandler> {
                     searchField.setFocused(true);
                 })
                 .dimensions(x + 152, y + 17, 16, 12)
-                .tooltip(Tooltip.of(Text.translatable("gui.storage_display.clear_search")))
+                .tooltip(Tooltip.of(Text.translatable("gui.arcanum_storage.clear_search")))
                 .build());
 
         addDrawableChild(ButtonWidget.builder(Text.literal("\u2039"), button -> clickButton(StorageScreenHandler.BUTTON_PREVIOUS_PAGE))
                 .dimensions(x + 7, y + 126, 20, 16)
-                .tooltip(Tooltip.of(Text.translatable("gui.storage_display.previous_page")))
+                .tooltip(Tooltip.of(Text.translatable("gui.arcanum_storage.previous_page")))
                 .build());
 
         sortButton = addDrawableChild(ButtonWidget.builder(Text.empty(), button -> clickButton(StorageScreenHandler.BUTTON_SORT))
                 .dimensions(x + 31, y + 126, 38, 16)
-                .tooltip(Tooltip.of(Text.translatable("gui.storage_display.sort_hint")))
+                .tooltip(Tooltip.of(Text.translatable("gui.arcanum_storage.sort_hint")))
                 .build());
         updateSortLabel(true);
 
         addDrawableChild(ButtonWidget.builder(Text.literal("\u203A"), button -> clickButton(StorageScreenHandler.BUTTON_NEXT_PAGE))
                 .dimensions(x + 149, y + 126, 20, 16)
-                .tooltip(Tooltip.of(Text.translatable("gui.storage_display.next_page")))
+                .tooltip(Tooltip.of(Text.translatable("gui.arcanum_storage.next_page")))
                 .build());
     }
 
@@ -116,7 +116,7 @@ public class StorageDisplayScreen extends HandledScreen<StorageScreenHandler> {
         drawConnectionChip(context);
         drawStatus(context, mouseX, mouseY);
 
-        Text page = Text.translatable("gui.storage_display.page",
+        Text page = Text.translatable("gui.arcanum_storage.page",
                 handler.getPage() + 1, handler.getPageCount());
         context.drawCenteredTextWithShadow(textRenderer, page, 109, 130, TEXT_MAIN);
     }
@@ -145,22 +145,22 @@ public class StorageDisplayScreen extends HandledScreen<StorageScreenHandler> {
             message = origin;
             color = GOLD_BRIGHT;
         } else if (handler.getConnectionCount() == 0) {
-            message = Text.translatable("gui.storage_display.empty.no_connections");
+            message = Text.translatable("gui.arcanum_storage.empty.no_connections");
             color = TEXT_ERROR;
         } else if (handler.isTruncated()) {
-            message = Text.translatable("gui.storage_display.truncated", StorageNetwork.MAX_ENTRIES);
+            message = Text.translatable("gui.arcanum_storage.truncated", StorageNetwork.MAX_ENTRIES);
             color = TEXT_WARN;
         } else if (handler.isDepthLimited()) {
-            message = Text.translatable("gui.storage_display.depth_limited");
+            message = Text.translatable("gui.arcanum_storage.depth_limited");
             color = TEXT_WARN;
         } else if (handler.getEntryCount() == 0) {
             String query = searchField == null ? "" : searchField.getText();
             message = query.isBlank()
-                    ? Text.translatable("gui.storage_display.empty.no_items")
-                    : Text.translatable("gui.storage_display.empty.no_results");
+                    ? Text.translatable("gui.arcanum_storage.empty.no_items")
+                    : Text.translatable("gui.arcanum_storage.empty.no_results");
             color = TEXT_DIM;
         } else {
-            message = Text.translatable("gui.storage_display.extract_only");
+            message = Text.translatable("gui.arcanum_storage.extract_only");
             color = GOLD;
         }
         context.drawCenteredTextWithShadow(textRenderer, message, backgroundWidth / 2, 145, color);
@@ -183,12 +183,12 @@ public class StorageDisplayScreen extends HandledScreen<StorageScreenHandler> {
         if (code <= 0) return null;
 
         int sideIndex = (code - 1) % StorageNetwork.SIDES.length;
-        Text side = Text.translatable("gui.storage_display.side."
+        Text side = Text.translatable("gui.arcanum_storage.side."
                 + StorageNetwork.SIDES[sideIndex].asString());
         if (code > StorageNetwork.SIDES.length) {
-            return Text.translatable("gui.storage_display.origin_nested", side);
+            return Text.translatable("gui.arcanum_storage.origin_nested", side);
         }
-        return Text.translatable("gui.storage_display.origin", side);
+        return Text.translatable("gui.arcanum_storage.origin", side);
     }
 
     private void updateSortLabel(boolean force) {
@@ -197,9 +197,9 @@ public class StorageDisplayScreen extends HandledScreen<StorageScreenHandler> {
         if (!force && mode == lastSort) return;
         lastSort = mode;
         Text label = switch (handler.getSortMode()) {
-            case NAME -> Text.translatable("gui.storage_display.sort.name");
-            case COUNT -> Text.translatable("gui.storage_display.sort.count");
-            case NONE -> Text.translatable("gui.storage_display.sort.order");
+            case NAME -> Text.translatable("gui.arcanum_storage.sort.name");
+            case COUNT -> Text.translatable("gui.arcanum_storage.sort.count");
+            case NONE -> Text.translatable("gui.arcanum_storage.sort.order");
         };
         sortButton.setMessage(label);
     }
