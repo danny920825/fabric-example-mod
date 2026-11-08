@@ -71,6 +71,47 @@ La prioridad es publicar una primera versión pequeña que extraiga objetos con 
 - [x] Validar en servidor real: encantamiento cargado, fuera de la mesa, 15/200 bibliotecarios con la oferta, yunque 31 niveles y arranque del servidor con el nuevo hook de muerte.
 - [x] Probar en servidor dedicado el Caché del Archivo: muerte normal, cofre del End lleno, keepInventory, bolsa sin encantar, equipo vacío, varias bolsas, objetos con Maldición de Desaparición y autodestrucción al vaciarse.
 
+## Versión 1.0.0 — Registro de Campo del Archivista
+
+> Plan detallado: [PLAN_LIBRO.md](PLAN_LIBRO.md). El libro es el marcador de 1.0.0: la versión no se cierra hasta que el Manual cubra todas las funciones implementadas y funcione en mundos nuevos y ya explorados. La progresión no depende de loot, estructuras ni RNG.
+
+### 0.3.0 — Conocimiento
+
+- [ ] Crear `field_ledger` con receta renovable, textura y apertura de interfaz.
+- [ ] Definir hechos como advancements técnicos (`item:`, `craft:`, `place:`, `event:`).
+- [ ] Implementar siembra desde inventario, cofre del End, estadísticas y advancements vanilla.
+- [ ] Añadir `manual.json` con una entrada de prueba (`archive_cable`) y los tres estados.
+- [ ] Implementar pantalla mínima, comandos de depuración y validación de contenido.
+- [ ] Probar en servidor dedicado: persistencia, dos jugadores, reinicio y mundo existente.
+
+### 0.4.0 — Manual
+
+- [ ] Interfaz de dos páginas con índice, navegación, búsqueda, iconos y avisos.
+- [ ] Escribir capítulos 1–5 y 7–10 para las funciones implementadas (sin diezmo).
+- [ ] Añadir rejillas de receta o iconos de ingredientes.
+- [ ] Paridad de claves en `en_us`, `es_es` y `es_mx`; revisión de tono.
+
+### 0.5.0 — Logros y Anales
+
+- [ ] Árbol visible de logros basado en hechos, con ruta principal y opcionales.
+- [ ] Logro de cierre “El Registro completo”.
+- [ ] Escribir los Anales y desbloquearlos por hitos.
+- [ ] Documentos de loot opcionales, nunca necesarios para el Manual.
+- [ ] Pulir la calibración de mundos existentes y el aviso de primera apertura.
+
+### 1.0.0 — Cierre
+
+- [ ] Congelar contenido y revisar que no haya capítulos de funciones no implementadas.
+- [ ] Validar servidor dedicado, mundo de 500 días, `/reload` y JAR en instancia limpia.
+- [ ] Medir rendimiento del escaneo y de la apertura del libro.
+- [ ] Actualizar README, CHANGELOG y documentación; etiquetar 1.0.0.
+
+### Decisiones pendientes
+
+- [ ] Confirmar si el diezmo queda fuera de 1.0 (recomendado) o se implementa antes.
+- [ ] Confirmar si la receta del libro está siempre disponible (recomendado) o se desbloquea estrictamente por logro.
+- [ ] Confirmar el alcance de las rejillas de receta en la interfaz.
+
 ## Fase 2 (histórica) — Mejoras posteriores de consulta
 
 - [x] Mostrar estados vacíos claros: sin conexiones, búsqueda sin resultados y aviso de contenido anidado oculto por profundidad.
