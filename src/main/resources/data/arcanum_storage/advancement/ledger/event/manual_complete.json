@@ -1,0 +1,13 @@
+{
+  "parent": "arcanum_storage:ledger/root",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

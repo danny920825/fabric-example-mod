@@ -1,0 +1,23 @@
+{
+  "parent": "arcanum_storage:ledger/root",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "recipe_id": "arcanum_storage:field_ledger"
+      },
+      "trigger": "minecraft:recipe_crafted"
+    },
+    "crafter": {
+      "conditions": {
+        "recipe_id": "arcanum_storage:field_ledger"
+      },
+      "trigger": "minecraft:crafter_recipe_crafted"
+    }
+  },
+  "requirements": [
+    [
+      "done",
+      "crafter"
+    ]
+  ]
+}

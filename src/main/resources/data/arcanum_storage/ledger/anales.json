@@ -1,0 +1,41 @@
+{
+  "anals": [
+    {
+      "id": "founding",
+      "order": 1,
+      "requires": [
+        "craft:arcanum_storage:field_ledger"
+      ]
+    },
+    {
+      "id": "network",
+      "order": 2,
+      "requires": [
+        "place:arcanum_storage:archive_cable",
+        "event:first_chest"
+      ]
+    },
+    {
+      "id": "binding",
+      "order": 3,
+      "requires": [
+        "event:binding_obtained",
+        "event:binding_applied"
+      ]
+    },
+    {
+      "id": "cache",
+      "order": 4,
+      "requires": [
+        "event:cache_created",
+        "event:cache_recovered"
+      ]
+    },
+    {
+      "id": "last_record",
+      "order": 5,
+      "requires": [],
+      "completeManual": true
+    }
+  ]
+}

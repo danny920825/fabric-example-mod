@@ -1,0 +1,20 @@
+{
+  "parent": "arcanum_storage:ledger/root",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "arcanum_storage:storage_display"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

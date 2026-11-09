@@ -1,0 +1,20 @@
+{
+  "parent": "arcanum_storage:ledger/root",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:ender_eye"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

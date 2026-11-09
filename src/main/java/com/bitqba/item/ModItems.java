@@ -8,16 +8,19 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
+import java.util.function.Function;
+
 public final class ModItems {
-    public static final Item END_POUCH = register("end_pouch");
+    public static final Item END_POUCH = register("end_pouch", EndPouchItem::new);
+    public static final Item FIELD_LEDGER = register("field_ledger", FieldLedgerItem::new);
 
     private ModItems() {}
 
-    private static Item register(String name) {
+    private static Item register(String name, Function<Item.Settings, Item> factory) {
         Identifier id = Identifier.of(ArcanumStorageMod.MOD_ID, name);
         RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, id);
-        return Registry.register(Registries.ITEM, key,
-                new EndPouchItem(new Item.Settings().registryKey(key).maxCount(1)));
+        Item.Settings settings = new Item.Settings().registryKey(key).maxCount(1);
+        return Registry.register(Registries.ITEM, key, factory.apply(settings));
     }
 
     public static void register() {

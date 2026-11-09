@@ -1,10 +1,10 @@
 # Arcanum Storage
 
-Arcanum Storage is a Fabric mod for **Minecraft Java 1.21.9**. It adds a physical storage terminal that searches the contents of up to twenty vanilla chests across a cable network, including the shulker boxes stored inside them, and an Archive Connector that organizes unlabeled shulker boxes with the Shulker Press. It also adds the End Pouch, a portable door to the player's ender chest, and the Arcanum Binding enchantment that turns the pouch into a one-use death cache for the player's combat gear.
+Arcanum Storage is a Fabric mod for **Minecraft Java 1.21.9**. It adds a physical storage terminal that searches the contents of up to twenty vanilla chests across a cable network, including the shulker boxes stored inside them, and an Archive Connector that organizes unlabeled shulker boxes with the Shulker Press. It also adds the End Pouch, a portable door to the player's ender chest, and the Arcanum Binding enchantment that turns the pouch into a one-use death cache for the player's combat gear. The **Field Ledger** is a craftable field manual that records the mechanics you have personally verified and keeps that knowledge permanently, even if you lose the book or the items involved.
 
 **The catalog is extraction-only.** It lets you search and take items out. It never accepts items: to store something, open the specific chest and place the item there. This keeps every deposit unambiguous and avoids the terminal silently choosing a chest or shulker for you.
 
-All the crafting tables above are for version 0.2.1.
+All the crafting tables above are for version 1.0.0.
 
 ## Requirements
 
@@ -17,7 +17,7 @@ All the crafting tables above are for version 0.2.1.
 
 1. Install Fabric Loader for Minecraft 1.21.9.
 2. Put [Fabric API](https://modrinth.com/mod/fabric-api) in the `mods` folder.
-3. Put the Arcanum Storage JAR (`arcanum-storage-0.2.1.jar`) in the same `mods` folder.
+3. Put the Arcanum Storage JAR (`arcanum-storage-1.0.0.jar`) in the same `mods` folder.
 4. Start the game with the Fabric profile.
 
 ## How to use it
@@ -64,6 +64,15 @@ All the crafting tables above are for version 0.2.1.
 
   This is the most expensive recipe in the mod. The chorus fruit and the shulker shell only grow inside the outer islands of the End, so the pouch can only be crafted after the dragon has been defeated. The pouch opens the player's ender chest.
 
+- **Field Ledger:** a craftable field manual. The recipe is always available:
+
+  ```
+  I C
+  B R
+  ```
+
+  `I` = ink sac, `C` = copper ingot, `B` = book, `R` = redstone dust. It yields one Field Ledger. Right-click it to open the Registry. It does not consume the book.
+
 - **Storage Display:** four gold ingots, four iron ingots, one diamond and two Ender Eyes.
 
   ```
@@ -73,6 +82,15 @@ All the crafting tables above are for version 0.2.1.
   ```
 
   `G` = gold ingot, `I` = iron ingot, `E` = Ender Eye, `D` = diamond.
+
+### Using the Field Ledger
+
+Right-click the Field Ledger to open the **Registry**. It has two tabs:
+
+- **Manual:** practical, step-by-step pages for the mechanics implemented in this version. Each entry has three states: **Unknown**, **Partial**, and **Complete**. A partial entry lists exactly what is still missing; a complete entry shows the recipe and the verified behaviour.
+- **Annals:** optional history that unlocks through milestones. Annals never gate Manual pages or recipes.
+
+Knowledge is permanent per player. It is stored as hidden vanilla advancements, so losing the book, dying, or changing items does not erase a page. On first join, the mod also recovers verifiable knowledge from your inventory, your ender chest, your statistics and vanilla milestones, so the Registry works in worlds that were already explored before installing this version. The Field Ledger recipe is unlocked automatically when you join, even if you already know every vanilla recipe.
 
 ### Building the network
 
@@ -158,7 +176,7 @@ Open the End Pouch by right-clicking it while holding it, or by right-clicking i
 - Before every extraction, the server re-checks the connector, the display, the chest, the slot and the container path. If something changed or disconnected, the operation is refused and the list is refreshed.
 - A listing is capped at 3000 entries; the screen warns when the cap is reached.
 
-## Known limitations for 0.2.1
+## Known limitations for 1.0.0
 
 - No deposits from the catalog. Open the chosen chest to store items.
 - The Shulker Press only organizes one chest per connector and only unlabeled shulkers; it does not organize whole networks yet, and it turns off when the network holds more than one chest.

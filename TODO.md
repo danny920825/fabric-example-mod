@@ -16,6 +16,20 @@ La prioridad es publicar una primera versión pequeña que extraiga objetos con 
 - [ ] Probar en mundo: receta, colocación, conexión de los cuatro lados, cofre simple/doble, búsqueda, páginas, extracción de stack/una unidad, shulkers, desconexión y rotura/recuperación.
 - [ ] Verificar persistencia al cerrar el mundo y volver a abrirlo.
 - [x] Compilar el JAR y revisar su contenido, metadatos y recursos antes de etiquetar la versión.
+- [x] Crear el Registro de Campo del Archivista (field_ledger) con receta, textura y apertura de interfaz.
+- [x] Definir hechos como advancements técnicos (`item:`, `craft:`, `place:`, `event:`).
+- [x] Implementar siembra desde inventario, cofre del End, estadísticas y advancements vanilla.
+- [x] Añadir `manual.json` con entrada de prueba (`archive_cable`) y los tres estados.
+- [x] Implementar pantalla mínima, comandos de depuración y validación de contenido.
+- [x] Probar en servidor dedicado: persistencia, dos jugadores, reinicio y mundo existente.
+- [x] Bump a 1.0.0.
+- [x] Crear el Registro de Campo del Archivista (field_ledger) con receta, textura y apertura de interfaz.
+- [x] Definir hechos como advancements técnicos (`item:`, `craft:`, `place:`, `event:`).
+- [x] Implementar siembra desde inventario, cofre del End, estadísticas y advancements vanilla.
+- [x] Añadir `manual.json` con entrada de prueba (`archive_cable`) y los tres estados.
+- [x] Implementar pantalla mínima, comandos de depuración y validación de contenido.
+- [x] Probar en servidor dedicado: persistencia, dos jugadores, reinicio y mundo existente.
+- [x] Bump a 1.0.0.
 
 ## Fase 1 — Publicar 0.1
 

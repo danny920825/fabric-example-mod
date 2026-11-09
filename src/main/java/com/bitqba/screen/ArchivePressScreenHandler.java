@@ -1,6 +1,7 @@
 package com.bitqba.screen;
 
 import com.bitqba.block.ModBlocks;
+import com.bitqba.ledger.LedgerService;
 import com.bitqba.storage.ShulkerPress;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -38,7 +39,16 @@ public class ArchivePressScreenHandler extends ScreenHandler {
         addProperties(data);
 
         if (!playerInventory.player.getEntityWorld().isClient()) {
-            publish(ShulkerPress.analyze(playerInventory.player.getEntityWorld(), this.connectorPos), false);
+            ShulkerPress.Analysis analysis =
+                    ShulkerPress.analyze(playerInventory.player.getEntityWorld(), this.connectorPos);
+            publish(analysis, false);
+            if (playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
+                LedgerService.onPressOpened(serverPlayer,
+                        analysis.status() == ShulkerPress.Status.MULTIPLE_CHESTS);
+                if (analysis.status() == ShulkerPress.Status.READY) {
+                    LedgerService.onPressAnalyzed(serverPlayer);
+                }
+            }
         }
     }
 
@@ -63,6 +73,10 @@ public class ArchivePressScreenHandler extends ScreenHandler {
             ShulkerPress.Analysis analysis = ShulkerPress.analyze(world, connectorPos);
             preview = analysis.plan();
             publish(analysis, true);
+            if (player instanceof ServerPlayerEntity serverPlayer
+                    && analysis.status() == ShulkerPress.Status.READY) {
+                LedgerService.onPressAnalyzed(serverPlayer);
+            }
             return true;
         }
         if (id == BUTTON_ORGANIZE) {
@@ -70,6 +84,10 @@ public class ArchivePressScreenHandler extends ScreenHandler {
             ShulkerPress.Analysis result = ShulkerPress.apply(world, preview);
             preview = null;
             publish(result, false);
+            if (player instanceof ServerPlayerEntity serverPlayer
+                    && result.status() == ShulkerPress.Status.APPLIED) {
+                LedgerService.onPressOrganized(serverPlayer);
+            }
             return true;
         }
         return false;

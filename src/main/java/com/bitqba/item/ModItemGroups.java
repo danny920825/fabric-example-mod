@@ -34,6 +34,7 @@ public final class ModItemGroups {
             entries.add(ModBlocks.ARCHIVE_CABLE);
             entries.add(ModBlocks.ARCHIVE_CONNECTOR);
             entries.add(ModItems.END_POUCH);
+            entries.add(ModItems.FIELD_LEDGER);
         });
     }
 }

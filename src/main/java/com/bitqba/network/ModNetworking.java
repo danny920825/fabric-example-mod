@@ -9,6 +9,9 @@ public final class ModNetworking {
 
     public static void register() {
         PayloadTypeRegistry.playC2S().register(StorageSearchPayload.ID, StorageSearchPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(LedgerOpenS2CPayload.ID, LedgerOpenS2CPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(LedgerNoteS2CPayload.ID, LedgerNoteS2CPayload.CODEC);
+
         ServerPlayNetworking.registerGlobalReceiver(StorageSearchPayload.ID, (payload, context) ->
                 context.server().execute(() -> {
                     if (context.player().currentScreenHandler instanceof StorageScreenHandler handler

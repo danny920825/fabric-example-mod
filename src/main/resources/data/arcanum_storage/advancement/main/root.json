@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.arcanum_storage.main.root.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "arcanum_storage:field_ledger"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.arcanum_storage.main.root.title"
+    },
+    "background": "minecraft:gui/advancements/backgrounds/stone"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

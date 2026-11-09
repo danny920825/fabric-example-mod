@@ -2,6 +2,7 @@ package com.bitqba.storage;
 
 import com.bitqba.enchantment.ModEnchantments;
 import com.bitqba.item.ModItems;
+import com.bitqba.ledger.LedgerService;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.DataComponentTypes;
@@ -121,6 +122,7 @@ public final class ArchiveCache {
         enderChest.markDirty();
 
         PENDING.put(player.getUuid(), new PendingCache(overflow));
+        LedgerService.onCacheCreated(player);
     }
 
     private static int findBoundPouch(PlayerInventory inventory) {

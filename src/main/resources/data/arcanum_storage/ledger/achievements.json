@@ -1,0 +1,39 @@
+{
+  "achievements": [
+    {
+      "id": "arcanum_storage:main/root",
+      "requires": [
+        "event:seeded"
+      ]
+    },
+    {
+      "id": "arcanum_storage:main/first_chest",
+      "requires": [
+        "event:first_chest"
+      ]
+    },
+    {
+      "id": "arcanum_storage:main/extraction",
+      "requires": [
+        "event:extracted_item"
+      ]
+    },
+    {
+      "id": "arcanum_storage:main/press",
+      "requires": [
+        "event:press_organized"
+      ]
+    },
+    {
+      "id": "arcanum_storage:main/end_pouch",
+      "requires": [
+        "event:end_pouch_used"
+      ]
+    },
+    {
+      "id": "arcanum_storage:main/complete",
+      "requires": [],
+      "completeManual": true
+    }
+  ]
+}

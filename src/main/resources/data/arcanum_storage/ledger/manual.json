@@ -1,0 +1,366 @@
+{
+  "chapters": [
+    {
+      "id": "building",
+      "order": 1,
+      "entries": [
+        {
+          "id": "field_ledger",
+          "order": 1,
+          "icon": "arcanum_storage:field_ledger",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "item:minecraft:book"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "item:minecraft:book",
+                "item:minecraft:ink_sac",
+                "item:minecraft:copper_ingot",
+                "item:minecraft:redstone",
+                "craft:arcanum_storage:field_ledger"
+              ]
+            }
+          ],
+          "recipe": [
+            [
+              "minecraft:ink_sac",
+              "minecraft:copper_ingot"
+            ],
+            [
+              "minecraft:book",
+              "minecraft:redstone"
+            ]
+          ]
+        },
+        {
+          "id": "storage_connector",
+          "order": 2,
+          "icon": "arcanum_storage:storage_connector",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "item:minecraft:redstone_block"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "item:minecraft:redstone_block",
+                "item:minecraft:repeater",
+                "item:minecraft:comparator",
+                "craft:arcanum_storage:storage_connector"
+              ]
+            }
+          ],
+          "recipe": [
+            [
+              "minecraft:redstone_block",
+              "minecraft:repeater",
+              "minecraft:redstone_block"
+            ],
+            [
+              "minecraft:repeater",
+              "minecraft:comparator",
+              "minecraft:repeater"
+            ],
+            [
+              "minecraft:redstone_block",
+              "minecraft:repeater",
+              "minecraft:redstone_block"
+            ]
+          ]
+        },
+        {
+          "id": "storage_display",
+          "order": 3,
+          "icon": "arcanum_storage:storage_display",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "item:minecraft:gold_ingot"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "item:minecraft:gold_ingot",
+                "item:minecraft:iron_ingot",
+                "item:minecraft:ender_eye",
+                "item:minecraft:diamond",
+                "craft:arcanum_storage:storage_display"
+              ]
+            }
+          ],
+          "recipe": [
+            [
+              "minecraft:gold_ingot",
+              "minecraft:iron_ingot",
+              "minecraft:gold_ingot"
+            ],
+            [
+              "minecraft:ender_eye",
+              "minecraft:diamond",
+              "minecraft:ender_eye"
+            ],
+            [
+              "minecraft:gold_ingot",
+              "minecraft:iron_ingot",
+              "minecraft:gold_ingot"
+            ]
+          ]
+        },
+        {
+          "id": "archive_cable",
+          "order": 4,
+          "icon": "arcanum_storage:archive_cable",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "item:minecraft:copper_ingot"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "item:minecraft:copper_ingot",
+                "item:minecraft:redstone",
+                "craft:arcanum_storage:archive_cable"
+              ]
+            }
+          ],
+          "recipe": [
+            [
+              "minecraft:copper_ingot",
+              "minecraft:redstone",
+              "minecraft:copper_ingot"
+            ]
+          ]
+        },
+        {
+          "id": "archive_connector",
+          "order": 5,
+          "icon": "arcanum_storage:archive_connector",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "item:minecraft:shulker_shell"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "item:minecraft:shulker_shell",
+                "item:minecraft:copper_ingot",
+                "item:minecraft:redstone",
+                "item:minecraft:piston",
+                "craft:arcanum_storage:archive_connector"
+              ]
+            }
+          ],
+          "recipe": [
+            [
+              "minecraft:copper_ingot",
+              "minecraft:redstone",
+              "minecraft:copper_ingot"
+            ],
+            [
+              "minecraft:redstone",
+              "minecraft:shulker_shell",
+              "minecraft:redstone"
+            ],
+            [
+              "minecraft:copper_ingot",
+              "minecraft:piston",
+              "minecraft:copper_ingot"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "using",
+      "order": 2,
+      "entries": [
+        {
+          "id": "search",
+          "order": 1,
+          "icon": "arcanum_storage:storage_display",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "item:arcanum_storage:storage_display"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "place:arcanum_storage:storage_display",
+                "event:searched"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "extraction",
+          "order": 2,
+          "icon": "minecraft:hopper",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "event:first_chest"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "event:first_chest",
+                "event:extracted_item"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "press",
+          "order": 3,
+          "icon": "arcanum_storage:archive_connector",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "item:arcanum_storage:archive_connector"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "place:arcanum_storage:archive_connector",
+                "event:press_analyzed",
+                "event:press_organized"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "network",
+          "order": 4,
+          "icon": "arcanum_storage:archive_cable",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "place:arcanum_storage:archive_cable"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "place:arcanum_storage:archive_cable",
+                "place:arcanum_storage:archive_connector"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "order": 3,
+      "entries": [
+        {
+          "id": "end_pouch",
+          "order": 1,
+          "icon": "arcanum_storage:end_pouch",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "item:minecraft:ender_chest"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "item:minecraft:ender_chest",
+                "item:minecraft:chorus_fruit",
+                "item:minecraft:shulker_shell",
+                "item:minecraft:ender_eye",
+                "item:minecraft:leather",
+                "item:minecraft:string",
+                "craft:arcanum_storage:end_pouch",
+                "event:end_pouch_used"
+              ]
+            }
+          ],
+          "recipe": [
+            [
+              "minecraft:leather",
+              "minecraft:ender_chest",
+              "minecraft:leather"
+            ],
+            [
+              "minecraft:chorus_fruit",
+              "minecraft:shulker_shell",
+              "minecraft:chorus_fruit"
+            ],
+            [
+              "minecraft:string",
+              "minecraft:ender_eye",
+              "minecraft:string"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

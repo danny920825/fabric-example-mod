@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["IC", "BR"],
+  "key": {
+    "I": "minecraft:ink_sac",
+    "C": "minecraft:copper_ingot",
+    "B": "minecraft:book",
+    "R": "minecraft:redstone"
+  },
+  "result": {"id": "arcanum_storage:field_ledger", "count": 1}
+}

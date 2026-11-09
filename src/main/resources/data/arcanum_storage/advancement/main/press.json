@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.arcanum_storage.main.press.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "arcanum_storage:archive_connector"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.arcanum_storage.main.press.title"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true,
+  "parent": "arcanum_storage:main/root"
+}

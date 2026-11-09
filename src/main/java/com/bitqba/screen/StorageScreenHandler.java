@@ -1,5 +1,6 @@
 package com.bitqba.screen;
 
+import com.bitqba.ledger.LedgerService;
 import com.bitqba.storage.StorageNetwork;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -92,6 +93,9 @@ public class StorageScreenHandler extends ScreenHandler {
         if (slotIndex >= 0 && slotIndex < STORAGE_SLOTS) {
             if (player.getEntityWorld().isClient()) return;
             if (!canUse(player)) {
+                if (player instanceof ServerPlayerEntity serverPlayer) {
+                    LedgerService.onConnectionError(serverPlayer);
+                }
                 closeFor(player);
                 return;
             }
@@ -107,6 +111,9 @@ public class StorageScreenHandler extends ScreenHandler {
             // A non-empty cursor means the player is trying to deposit. The catalog is read-only.
             if (!getCursorStack().isEmpty()) {
                 player.sendMessage(Text.translatable("gui.arcanum_storage.cursor_busy"), true);
+                if (player instanceof ServerPlayerEntity serverPlayer) {
+                    LedgerService.onConnectionError(serverPlayer);
+                }
                 return;
             }
 
@@ -117,8 +124,14 @@ public class StorageScreenHandler extends ScreenHandler {
                 ItemStack taken = StorageNetwork.extract(player.getEntityWorld(), connectorPos, entry, amount);
                 if (!taken.isEmpty()) {
                     setCursorStack(taken);
+                    if (player instanceof ServerPlayerEntity serverPlayer) {
+                        LedgerService.onExtracted(serverPlayer, entry.stack(), !entry.path().isEmpty());
+                    }
                 } else {
                     player.sendMessage(Text.translatable("gui.arcanum_storage.extraction_failed"), true);
+                    if (player instanceof ServerPlayerEntity serverPlayer) {
+                        LedgerService.onConnectionError(serverPlayer);
+                    }
                 }
             }
             refresh();
@@ -142,6 +155,9 @@ public class StorageScreenHandler extends ScreenHandler {
 
     private void moveCatalogEntryToPlayer(PlayerEntity player, int slotIndex) {
         if (!canUse(player)) {
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                LedgerService.onConnectionError(serverPlayer);
+            }
             closeFor(player);
             return;
         }
@@ -153,6 +169,9 @@ public class StorageScreenHandler extends ScreenHandler {
         int space = StorageNetwork.availableSpace(player.getInventory(), entry.stack());
         if (space <= 0) {
             player.sendMessage(Text.translatable("gui.arcanum_storage.inventory_full"), true);
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                LedgerService.onInventoryFull(serverPlayer);
+            }
             return;
         }
 
@@ -160,6 +179,9 @@ public class StorageScreenHandler extends ScreenHandler {
         ItemStack moved = StorageNetwork.extract(player.getEntityWorld(), connectorPos, entry, amount);
         if (moved.isEmpty()) {
             player.sendMessage(Text.translatable("gui.arcanum_storage.extraction_failed"), true);
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                LedgerService.onConnectionError(serverPlayer);
+            }
             refresh();
             return;
         }
@@ -171,6 +193,9 @@ public class StorageScreenHandler extends ScreenHandler {
         }
         if (amount < entry.stack().getCount()) {
             player.sendMessage(Text.translatable("gui.arcanum_storage.partial_move", amount), true);
+        }
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            LedgerService.onExtracted(serverPlayer, entry.stack(), !entry.path().isEmpty());
         }
         refresh();
     }
@@ -202,6 +227,9 @@ public class StorageScreenHandler extends ScreenHandler {
         this.query = query.length() > 64 ? query.substring(0, 64) : query;
         page = 0;
         refresh();
+        if (!this.query.isBlank() && playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
+            LedgerService.onSearched(serverPlayer);
+        }
     }
 
     public int getPage() { return pageData.get(PROPERTY_PAGE); }
@@ -236,6 +264,11 @@ public class StorageScreenHandler extends ScreenHandler {
         StorageNetwork.Listing listing = StorageNetwork.list(playerInventory.player.getEntityWorld(), connectorPos, query);
         entries = new ArrayList<>(listing.entries());
         sortEntries();
+
+        if (playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
+            LedgerService.onDisplayOpened(serverPlayer, listing.connectionCount(),
+                    listing.depthLimited(), listing.truncated());
+        }
 
         int pageCount = Math.max(1, (entries.size() + PAGE_SIZE - 1) / PAGE_SIZE);
         page = Math.min(page, pageCount - 1);

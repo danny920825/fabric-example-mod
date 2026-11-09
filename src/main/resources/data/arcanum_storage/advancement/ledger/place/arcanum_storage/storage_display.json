@@ -1,0 +1,21 @@
+{
+  "parent": "arcanum_storage:ledger/root",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "location": [
+          {
+            "block": "arcanum_storage:storage_display",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

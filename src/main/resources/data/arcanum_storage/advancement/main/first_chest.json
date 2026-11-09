@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.arcanum_storage.main.first_chest.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:chest"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.arcanum_storage.main.first_chest.title"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true,
+  "parent": "arcanum_storage:main/root"
+}

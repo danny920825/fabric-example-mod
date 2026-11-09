@@ -1,6 +1,7 @@
 package com.bitqba.item;
 
 import com.bitqba.enchantment.ModEnchantments;
+import com.bitqba.ledger.LedgerService;
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -70,6 +71,7 @@ public class EndPouchItem extends Item {
     private static void openEnderChest(PlayerEntity player) {
         if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
 
+        LedgerService.onEndPouchUsed(serverPlayer);
         EnderChestInventory inventory = player.getEnderChestInventory();
         serverPlayer.openHandledScreen(new SimpleNamedScreenHandlerFactory(
                 (syncId, playerInventory, playerEntity) ->

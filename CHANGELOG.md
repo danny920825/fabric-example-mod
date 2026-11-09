@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.0.0 — Field Ledger
+
+First full release.
+
+### Added
+
+- **Field Ledger** (`field_ledger`): craftable field manual (book, ink sac, copper ingot, redstone dust) that opens a two-tab registry. Manual entries progress through Unknown/Partial/Complete and show missing requirements, recipe grids and item icons. Annals are historical documents unlocked by milestones.
+- Knowledge is stored as hidden vanilla advancements, so it is permanent per player and survives losing the book, dying, reconnecting or reloading the world. No custom save format.
+- The Manual covers every implemented mechanic and never requires loot, structures, RNG, death or item loss. Annals add optional history only.
+- Visible achievement tree in the vanilla advancement screen, including the 1.0 capstone "The Registry is complete".
+- The Field Ledger recipe is always craftable and is unlocked in the recipe book automatically when joining, including already-explored worlds.
+
+### Changed
+
+- Version, README, creative tab and JAR name updated to 1.0.0.
+
+### Fixed
+
+- Field Ledger item model, 16x16 texture and translations (English, Spanish Spain, Spanish Mexico).
+- Removed invalid `//` comments from the three language files.
+- Corrected craft fact advancements so crafting in a normal crafting table unlocks them.
+
+### Compatibility
+
+- Minecraft Java 1.21.9
+- Fabric Loader 0.19.2+
+- Fabric API 0.134.1+1.21.9+
+- Java 21
+
 ## 0.2.1 — End Pouch and Archive Connector via cable
 
 Second minor feature release.
