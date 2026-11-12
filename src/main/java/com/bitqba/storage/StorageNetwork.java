@@ -217,6 +217,28 @@ public final class StorageNetwork {
         return new Listing(List.copyOf(result), chests.size(), depthLimited[0], truncated);
     }
 
+    /**
+     * Lists a single inventory, such as the player's ender chest. The inventory is
+     * treated as one connection and nested container contents are explored with the
+     * same depth rules as a normal cable network.
+     */
+    public static Listing listInventory(Inventory inventory, BlockPos origin, String query) {
+        String needle = query.toLowerCase(Locale.ROOT).trim();
+        List<StoredStack> result = new ArrayList<>();
+        boolean[] depthLimited = {false};
+        ChestStorage chest = new ChestStorage(origin, inventory, Direction.NORTH);
+
+        for (int slot = 0; slot < inventory.size(); slot++) {
+            if (result.size() >= MAX_ENTRIES) break;
+            ItemStack root = inventory.getStack(slot);
+            if (root.isEmpty()) continue;
+            collect(chest, slot, root, new ArrayList<>(), needle, result, depthLimited, 0);
+        }
+
+        boolean truncated = result.size() >= MAX_ENTRIES;
+        return new Listing(List.copyOf(result), 1, depthLimited[0], truncated);
+    }
+
     private static void collect(ChestStorage chest, int rootSlot, ItemStack stack, List<Integer> path,
             String query, List<StoredStack> result, boolean[] depthLimited, int depth) {
         if (stack.isEmpty() || result.size() >= MAX_ENTRIES) return;
@@ -255,7 +277,16 @@ public final class StorageNetwork {
         if (amount <= 0 || !isOperational(world, connector)) return ItemStack.EMPTY;
 
         Inventory inventory = inventoryFor(world, connector, entry.chest().position());
-        if (inventory == null || entry.slot() < 0 || entry.slot() >= inventory.size()) return ItemStack.EMPTY;
+        if (inventory == null) return ItemStack.EMPTY;
+        return extractFrom(inventory, entry, amount);
+    }
+
+    /**
+     * Extracts from an already resolved inventory. Used by the Ender Display, whose
+     * source is the player's ender chest rather than a cable network.
+     */
+    public static ItemStack extractFrom(Inventory inventory, StoredStack entry, int amount) {
+        if (amount <= 0 || entry.slot() < 0 || entry.slot() >= inventory.size()) return ItemStack.EMPTY;
 
         ItemStack root = inventory.getStack(entry.slot()).copy();
         ItemStack target = findStack(root, entry.path());

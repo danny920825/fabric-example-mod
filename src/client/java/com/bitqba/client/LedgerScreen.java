@@ -353,8 +353,8 @@ public final class LedgerScreen extends Screen {
         boolean showRecipe = !entry.recipe.isEmpty();
         int textWidth = detailW - (showRecipe ? 60 : 0);
         Text body = Text.translatable("gui.arcanum_storage.ledger." + entry.id + "." + entry.state);
-        context.drawWrappedTextWithShadow(textRenderer, body, detailX, detailY + 32,
-                Math.max(70, textWidth), INK);
+        context.drawWrappedText(textRenderer, body, detailX, detailY + 32,
+                Math.max(70, textWidth), INK, false);
 
         if (!entry.missing.isEmpty()) {
             int y = detailY + 68;
@@ -405,8 +405,8 @@ public final class LedgerScreen extends Screen {
             return;
         }
 
-        context.drawWrappedTextWithShadow(textRenderer, Text.translatable(anal.bodyKey),
-                detailX, detailY + 14, detailW, INK);
+        context.drawWrappedText(textRenderer, Text.translatable(anal.bodyKey),
+                detailX, detailY + 14, detailW, INK, false);
     }
 
     private void drawRecipe(DrawContext context, List<List<String>> recipe, int x, int y) {

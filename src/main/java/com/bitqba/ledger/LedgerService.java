@@ -458,6 +458,10 @@ public final class LedgerService {
         grant(player, LedgerFacts.event("end_pouch_used"));
     }
 
+    public static void onEnderDisplayUsed(ServerPlayerEntity player) {
+        grant(player, LedgerFacts.event("ender_display_used"));
+    }
+
     public static void onCacheCreated(ServerPlayerEntity player) {
         grant(player, LedgerFacts.event("cache_created"));
     }

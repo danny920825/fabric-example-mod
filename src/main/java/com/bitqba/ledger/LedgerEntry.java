@@ -101,7 +101,10 @@ public class LedgerEntry {
         if (!complete) return id + ": missing complete stage";
         for (List<String> row : recipe) {
             for (String item : row) {
-                if (item == null || item.isBlank() || !item.contains(":")) {
+                // Blank cells are allowed so a recipe can be drawn as a cross
+                // instead of being packed into the top-left corner.
+                if (item == null || item.isBlank()) continue;
+                if (!item.contains(":")) {
                     return id + ": invalid recipe item " + item;
                 }
             }

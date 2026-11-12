@@ -12,6 +12,7 @@ public class ArcanumStorageClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         HandledScreens.register(ModScreenHandlers.STORAGE_DISPLAY, StorageDisplayScreen::new);
+        HandledScreens.register(ModScreenHandlers.ENDER_DISPLAY, StorageDisplayScreen::new);
         HandledScreens.register(ModScreenHandlers.ARCHIVE_PRESS, ArchivePressScreen::new);
 
         ClientPlayNetworking.registerGlobalReceiver(LedgerOpenS2CPayload.ID, (payload, context) ->

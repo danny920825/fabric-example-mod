@@ -1,6 +1,7 @@
 package com.bitqba.item;
 
 import com.bitqba.ArcanumStorageMod;
+import com.bitqba.block.ModBlocks;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -13,6 +14,7 @@ import java.util.function.Function;
 public final class ModItems {
     public static final Item END_POUCH = register("end_pouch", EndPouchItem::new);
     public static final Item FIELD_LEDGER = register("field_ledger", FieldLedgerItem::new);
+    public static final Item ENDER_DISPLAY = register("ender_display", EnderDisplayItem::new);
 
     private ModItems() {}
 

@@ -8,11 +8,13 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,18 +51,30 @@ public class StorageScreenHandler extends ScreenHandler {
     private final PlayerInventory playerInventory;
     private final ArrayPropertyDelegate pageData = new ArrayPropertyDelegate(7);
     private final ArrayPropertyDelegate originData = new ArrayPropertyDelegate(STORAGE_SLOTS);
-    private final BlockPos connectorPos;
+    private final BlockPos sourcePos;
+    private final boolean enderMode;
     private List<StorageNetwork.StoredStack> entries = List.of();
     private String query = "";
     private int page;
     private SortMode sortMode = SortMode.NONE;
 
-    public StorageScreenHandler(int syncId, PlayerInventory playerInventory, BlockPos connectorPos) {
-        super(ModScreenHandlers.STORAGE_DISPLAY, syncId);
+    public StorageScreenHandler(int syncId, PlayerInventory playerInventory, BlockPos sourcePos) {
+        this(ModScreenHandlers.STORAGE_DISPLAY, syncId, playerInventory, sourcePos, false);
+    }
+
+    public StorageScreenHandler(int syncId, PlayerInventory playerInventory, BlockPos sourcePos, boolean enderMode) {
+        this(enderMode ? ModScreenHandlers.ENDER_DISPLAY : ModScreenHandlers.STORAGE_DISPLAY,
+                syncId, playerInventory, sourcePos, enderMode);
+    }
+
+    private StorageScreenHandler(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory,
+            BlockPos sourcePos, boolean enderMode) {
+        super(type, syncId);
         this.playerInventory = playerInventory;
+        this.enderMode = enderMode;
         addProperties(pageData);
         addProperties(originData);
-        this.connectorPos = connectorPos.toImmutable();
+        this.sourcePos = sourcePos.toImmutable();
 
         for (int i = 0; i < STORAGE_SLOTS; i++) {
             int x = 8 + (i % 9) * 18;
@@ -83,9 +97,21 @@ public class StorageScreenHandler extends ScreenHandler {
 
     @Override
     public boolean canUse(PlayerEntity player) {
-        return StorageNetwork.isOperational(player.getEntityWorld(), connectorPos)
-                && player.squaredDistanceTo(connectorPos.getX() + 0.5, connectorPos.getY() + 1.5,
-                        connectorPos.getZ() + 0.5) < 64.0;
+        if (enderMode) {
+            return true;
+        }
+        World world = player.getEntityWorld();
+        if (!StorageNetwork.isOperational(world, sourcePos)) return false;
+        double centerY = sourcePos.getY() + 1.5;
+        return player.squaredDistanceTo(sourcePos.getX() + 0.5, centerY,
+                sourcePos.getZ() + 0.5) < 64.0;
+    }
+
+    private ItemStack extractEntry(PlayerEntity player, StorageNetwork.StoredStack entry, int amount) {
+        if (enderMode) {
+            return StorageNetwork.extractFrom(player.getEnderChestInventory(), entry, amount);
+        }
+        return StorageNetwork.extract(player.getEntityWorld(), sourcePos, entry, amount);
     }
 
     @Override
@@ -121,7 +147,7 @@ public class StorageScreenHandler extends ScreenHandler {
             if (index >= 0 && index < entries.size()) {
                 StorageNetwork.StoredStack entry = entries.get(index);
                 int amount = button == 1 ? 1 : entry.stack().getCount();
-                ItemStack taken = StorageNetwork.extract(player.getEntityWorld(), connectorPos, entry, amount);
+                ItemStack taken = extractEntry(player, entry, amount);
                 if (!taken.isEmpty()) {
                     setCursorStack(taken);
                     if (player instanceof ServerPlayerEntity serverPlayer) {
@@ -176,7 +202,7 @@ public class StorageScreenHandler extends ScreenHandler {
         }
 
         int amount = Math.min(space, entry.stack().getCount());
-        ItemStack moved = StorageNetwork.extract(player.getEntityWorld(), connectorPos, entry, amount);
+        ItemStack moved = extractEntry(player, entry, amount);
         if (moved.isEmpty()) {
             player.sendMessage(Text.translatable("gui.arcanum_storage.extraction_failed"), true);
             if (player instanceof ServerPlayerEntity serverPlayer) {
@@ -254,6 +280,23 @@ public class StorageScreenHandler extends ScreenHandler {
         return originData.get(slotIndex);
     }
 
+    /** Human-readable origin for a catalog slot, or {@code null} when empty. */
+    public Text originText(int code) {
+        if (code <= 0) return null;
+        if (enderMode) {
+            return code > ORIGIN_NESTED
+                    ? Text.translatable("gui.arcanum_storage.origin_shulker")
+                    : Text.translatable("gui.arcanum_storage.origin_ender");
+        }
+        int sideIndex = (code - 1) % StorageNetwork.SIDES.length;
+        Text side = Text.translatable("gui.arcanum_storage.side."
+                + StorageNetwork.SIDES[sideIndex].asString());
+        if (code > ORIGIN_NESTED) {
+            return Text.translatable("gui.arcanum_storage.origin_nested", side);
+        }
+        return Text.translatable("gui.arcanum_storage.origin", side);
+    }
+
     private static void closeFor(PlayerEntity player) {
         if (player instanceof ServerPlayerEntity serverPlayer) serverPlayer.closeHandledScreen();
     }
@@ -261,11 +304,13 @@ public class StorageScreenHandler extends ScreenHandler {
     private void refresh() {
         if (playerInventory.player.getEntityWorld().isClient()) return;
 
-        StorageNetwork.Listing listing = StorageNetwork.list(playerInventory.player.getEntityWorld(), connectorPos, query);
+        StorageNetwork.Listing listing = enderMode
+                ? StorageNetwork.listInventory(playerInventory.player.getEnderChestInventory(), sourcePos, query)
+                : StorageNetwork.list(playerInventory.player.getEntityWorld(), sourcePos, query);
         entries = new ArrayList<>(listing.entries());
         sortEntries();
 
-        if (playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
+        if (!enderMode && playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
             LedgerService.onDisplayOpened(serverPlayer, listing.connectionCount(),
                     listing.depthLimited(), listing.truncated());
         }

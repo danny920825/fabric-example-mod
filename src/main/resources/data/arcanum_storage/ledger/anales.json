@@ -4,7 +4,7 @@
       "id": "founding",
       "order": 1,
       "requires": [
-        "craft:arcanum_storage:field_ledger"
+        "item:arcanum_storage:field_ledger"
       ]
     },
     {

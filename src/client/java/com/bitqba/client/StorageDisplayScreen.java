@@ -181,14 +181,7 @@ public class StorageDisplayScreen extends HandledScreen<StorageScreenHandler> {
         int slot = (offsetY / 18) * COLUMNS + (offsetX / 18);
         int code = handler.getOriginCode(slot);
         if (code <= 0) return null;
-
-        int sideIndex = (code - 1) % StorageNetwork.SIDES.length;
-        Text side = Text.translatable("gui.arcanum_storage.side."
-                + StorageNetwork.SIDES[sideIndex].asString());
-        if (code > StorageNetwork.SIDES.length) {
-            return Text.translatable("gui.arcanum_storage.origin_nested", side);
-        }
-        return Text.translatable("gui.arcanum_storage.origin", side);
+        return handler.originText(code);
     }
 
     private void updateSortLabel(boolean force) {

@@ -7,6 +7,7 @@ import com.bitqba.ledger.LedgerCommand;
 import com.bitqba.ledger.LedgerContentLoader;
 import com.bitqba.ledger.LedgerService;
 import com.bitqba.network.ModNetworking;
+import com.bitqba.recipe.ModRecipes;
 import com.bitqba.screen.ModScreenHandlers;
 import com.bitqba.storage.ArchiveCache;
 import net.fabricmc.api.ModInitializer;
@@ -25,6 +26,7 @@ public class ArcanumStorageMod implements ModInitializer {
     public void onInitialize() {
         ModBlocks.register();
         ModItems.register();
+        ModRecipes.register();
         ModItemGroups.register();
         ModScreenHandlers.register();
         ModNetworking.register();

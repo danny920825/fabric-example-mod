@@ -30,6 +30,7 @@ public final class ModItemGroups {
 
         ItemGroupEvents.modifyEntriesEvent(STORAGE).register(entries -> {
             entries.add(ModBlocks.STORAGE_DISPLAY);
+            entries.add(ModItems.ENDER_DISPLAY);
             entries.add(ModBlocks.STORAGE_CONNECTOR);
             entries.add(ModBlocks.ARCHIVE_CABLE);
             entries.add(ModBlocks.ARCHIVE_CONNECTOR);

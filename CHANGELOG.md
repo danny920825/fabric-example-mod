@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.1.0 — Ender Display
+
+### Added
+
+- **Ender Display** (`ender_display`): a portable item (not a block) combining an **unenchanted** End Pouch with a Storage Display, Archive Cable, Storage Connector and an **emerald block**. Use it from your hand or inventory to browse your own 27-slot ender chest and the contents of the shulker boxes inside it. Each player sees their own ender chest. Enchanted pouches, including Arcanum Binding, do not match the recipe.
+- New Manual entry for the Ender Display under the End chapter, with its own hidden item, craft and use facts.
+- New item model and 16x16 texture.
+- English, Spanish Spain and Spanish Mexico translations for the new item, container, origins, Manual entry and event.
+
+### Fixed
+
+- The Field Ledger body text no longer renders with a shadow, so the pixel font stays crisp when listing missing requirements.
+- The first Annals entry now recognizes a Field Ledger you already hold, instead of requiring you to craft one.
+
+### Changed
+
+- Version, README and JAR name updated to 1.1.0.
+
 ## 1.0.0 — Field Ledger
 
 First full release.

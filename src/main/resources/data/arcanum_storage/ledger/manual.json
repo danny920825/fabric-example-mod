@@ -359,6 +359,48 @@
               "minecraft:string"
             ]
           ]
+        },
+        {
+          "id": "ender_display",
+          "order": 2,
+          "icon": "arcanum_storage:ender_display",
+          "stages": [
+            {
+              "state": "unknown",
+              "requires": []
+            },
+            {
+              "state": "partial",
+              "requires": [
+                "item:arcanum_storage:end_pouch"
+              ]
+            },
+            {
+              "state": "complete",
+              "requires": [
+                "item:arcanum_storage:end_pouch",
+                "craft:arcanum_storage:ender_display",
+                "event:ender_display_used"
+              ]
+            }
+          ],
+          "recipe": [
+            [
+              "",
+              "arcanum_storage:end_pouch",
+              ""
+            ],
+            [
+              "arcanum_storage:archive_cable",
+              "arcanum_storage:storage_display",
+              "arcanum_storage:storage_connector"
+            ],
+            [
+              "",
+              "minecraft:emerald_block",
+              ""
+            ]
+          ]
         }
       ]
     }

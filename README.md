@@ -1,10 +1,10 @@
 # Arcanum Storage
 
-Arcanum Storage is a Fabric mod for **Minecraft Java 1.21.9**. It adds a physical storage terminal that searches the contents of up to twenty vanilla chests across a cable network, including the shulker boxes stored inside them, and an Archive Connector that organizes unlabeled shulker boxes with the Shulker Press. It also adds the End Pouch, a portable door to the player's ender chest, and the Arcanum Binding enchantment that turns the pouch into a one-use death cache for the player's combat gear. The **Field Ledger** is a craftable field manual that records the mechanics you have personally verified and keeps that knowledge permanently, even if you lose the book or the items involved.
+Arcanum Storage is a Fabric mod for **Minecraft Java 1.21.9**. It adds a physical storage terminal that searches the contents of up to twenty vanilla chests across a cable network, including the shulker boxes stored inside them, and an Archive Connector that organizes unlabeled shulker boxes with the Shulker Press. It also adds the End Pouch, a portable door to the player's ender chest, and the Arcanum Binding enchantment that turns the pouch into a one-use death cache for the player's combat gear. The **Ender Display** combines an unenchanted End Pouch with a Storage Display so you can browse your own ender chest and the shulker boxes inside it. The **Field Ledger** is a craftable field manual that records the mechanics you have personally verified and keeps that knowledge permanently, even if you lose the book or the items involved.
 
 **The catalog is extraction-only.** It lets you search and take items out. It never accepts items: to store something, open the specific chest and place the item there. This keeps every deposit unambiguous and avoids the terminal silently choosing a chest or shulker for you.
 
-All the crafting tables above are for version 1.0.0.
+All the crafting tables above are for version 1.1.0.
 
 ## Requirements
 
@@ -17,7 +17,7 @@ All the crafting tables above are for version 1.0.0.
 
 1. Install Fabric Loader for Minecraft 1.21.9.
 2. Put [Fabric API](https://modrinth.com/mod/fabric-api) in the `mods` folder.
-3. Put the Arcanum Storage JAR (`arcanum-storage-1.0.0.jar`) in the same `mods` folder.
+3. Put the Arcanum Storage JAR (`arcanum-storage-1.1.0.jar`) in the same `mods` folder.
 4. Start the game with the Fabric profile.
 
 ## How to use it
@@ -83,6 +83,16 @@ All the crafting tables above are for version 1.0.0.
 
   `G` = gold ingot, `I` = iron ingot, `E` = Ender Eye, `D` = diamond.
 
+- **Ender Display:** one **unenchanted** End Pouch, one Storage Display, one Archive Cable, one Storage Connector and one **emerald block**, arranged in a cross:
+
+  ```
+    P
+  C D S
+    E
+  ```
+
+  `P` = End Pouch with no enchantments, `C` = Archive Cable, `D` = Storage Display, `S` = Storage Connector, `E` = emerald block. An enchanted pouch (including Arcanum Binding) does not match the recipe.
+
 ### Using the Field Ledger
 
 Right-click the Field Ledger to open the **Registry**. It has two tabs:
@@ -142,6 +152,16 @@ All the mod blocks and the End Pouch live in their own creative tab, **Arcanum S
 
 Open the End Pouch by right-clicking it while holding it, or by right-clicking its slot in the player inventory. It opens the same 27-slot ender chest the player already has, without placing any block. The pouch is not consumed by normal use; only the Arcanum Binding death cache consumes it. It is only craftable after the dragon has been defeated (see the End Pouch recipe above).
 
+### Using the Ender Display
+
+Right-click the **Ender Display** to browse your own 27-slot ender chest as a catalog. It works like the Storage Display, but it does not need a connector, cable or chest: it reads your ender chest directly, including the contents of the shulker boxes stored inside it (up to two nested container levels).
+
+- It is a portable item, not a block: use it from your hand or from your inventory. It is never placed in the world.
+- Left-click a result to take a full stack, right-click to take one item, or shift-click to move as much as fits into your inventory.
+- The catalog is extraction-only, like the Storage Display. To store something, open your ender chest normally with an End Pouch or an ender chest.
+- Each player who uses it sees their own ender chest.
+- The recipe requires an **unenchanted** End Pouch. An enchanted pouch, including one with Arcanum Binding, does not match.
+
 ### Arcanum Binding
 
 **Arcanum Binding** is a rare enchantment made only for the End Pouch. It turns the pouch into a **one-use death cache**: when you die, the pouch is consumed and seals your combat gear in an **Archive Cache**.
@@ -176,9 +196,10 @@ Open the End Pouch by right-clicking it while holding it, or by right-clicking i
 - Before every extraction, the server re-checks the connector, the display, the chest, the slot and the container path. If something changed or disconnected, the operation is refused and the list is refreshed.
 - A listing is capped at 3000 entries; the screen warns when the cap is reached.
 
-## Known limitations for 1.0.0
+## Known limitations for 1.1.0
 
 - No deposits from the catalog. Open the chosen chest to store items.
+- The Ender Display reads only the player's own ender chest; it does not join cable networks or link to other players' ender chests.
 - The Shulker Press only organizes one chest per connector and only unlabeled shulkers; it does not organize whole networks yet, and it turns off when the network holds more than one chest.
 - No payment or tithe for linking chests yet; the cable network is free while the feature is being tested.
 - The End Pouch opens the ender chest and is only craftable after the dragon has been defeated. The network itself is local and holds at most 20 chests.

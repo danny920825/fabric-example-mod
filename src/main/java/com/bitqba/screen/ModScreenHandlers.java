@@ -13,6 +13,13 @@ public final class ModScreenHandlers {
                     Identifier.of(ArcanumStorageMod.MOD_ID, "storage_display"),
                     new ExtendedScreenHandlerType<>(StorageScreenHandler::new, BlockPos.PACKET_CODEC));
 
+    public static final ExtendedScreenHandlerType<StorageScreenHandler, BlockPos> ENDER_DISPLAY =
+            Registry.register(Registries.SCREEN_HANDLER,
+                    Identifier.of(ArcanumStorageMod.MOD_ID, "ender_display"),
+                    new ExtendedScreenHandlerType<>(
+                            (syncId, inventory, pos) -> new StorageScreenHandler(syncId, inventory, pos, true),
+                            BlockPos.PACKET_CODEC));
+
     public static final ExtendedScreenHandlerType<ArchivePressScreenHandler, BlockPos> ARCHIVE_PRESS =
             Registry.register(Registries.SCREEN_HANDLER,
                     Identifier.of(ArcanumStorageMod.MOD_ID, "archive_press"),

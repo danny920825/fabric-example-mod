@@ -28,6 +28,7 @@ public final class LedgerFacts {
             "field_ledger",
             "storage_connector",
             "storage_display",
+            "ender_display",
             "archive_cable",
             "archive_connector",
             "end_pouch"
@@ -52,6 +53,7 @@ public final class LedgerFacts {
             "press_organized",
             "press_multiple",
             "end_pouch_used",
+            "ender_display_used",
             "binding_obtained",
             "binding_applied",
             "cache_created",
